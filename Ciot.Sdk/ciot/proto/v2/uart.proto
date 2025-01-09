@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package Ciot;
+
+// Enum representing the state of the UART module.
+enum UartState {
+  UART_STATE_CLOSED = 0;         // UART is closed.
+  UART_STATE_STARTED = 1;        // UART is started.
+  UART_STATE_INTERNAL_ERROR = 2; // UART encountered an internal error.
+  UART_STATE_CIOT_S_ERROR = 3;   // UART encountered a CIOT-S (Custom IoT System) error.
+}
+
+// Enum representing different types of UART requests.
+enum UartReqType {
+  UART_REQ_TYPE_UNKOWN = 0;     // Unknown UART request type.
+  UART_REQ_TYPE_SEND_DATA = 1;  // Request to send data via UART.
+  UART_REQ_TYPE_SEND_BYTES = 2; // Request to send bytes via UART.
+}
+
+// Enum representing different UART error types.
+enum UartError {
+  UART_ERROR_NONE = 0;           // No UART error.
+  UART_ERROR_BREAK = 1;          // UART break error.
+  UART_ERROR_BUFFER_FULL = 2;    // UART buffer full error.
+  UART_ERROR_FIFO_OVERFLOW = 3;  // UART FIFO overflow error.
+  UART_ERROR_FRAME = 4;          // UART frame error.
+  UART_ERROR_PARITY = 5;         // UART parity error.
+  UART_ERROR_DATA_BREAK = 6;     // UART data break error.
+  UART_ERROR_OPEN = 8;           // UART open error.
+  UART_ERROR_UNKNOWN = -1;       // Unknown UART event error.
+}
+
+// Message used to stop uart interface
+message UartStop {}
+
+// Message representing configuration for the UART module.
+message UartCfg {
+  int32 baud_rate = 1;   // Baud rate for UART.
+  int32 num = 2;         // UART number.
+  int32 rx_pin = 3;      // RX pin number.
+  int32 tx_pin = 4;      // TX pin number.
+  int32 rts_pin = 5;     // RTS pin number.
+  int32 cts_pin = 6;     // CTS pin number.
+  int32 parity = 7;      // Parity for UART.
+  bool flow_control = 8; // Flow control for UART.
+  bool dtr = 9;          // DTR (Data Terminal Ready) signal.
+  bool bridge_mode = 10; // Bridge mode for UART.
+}
+
+// Message representing status for the UART module.
+message UartStatus {
+  UartState state = 1; // State of the UART module.
+  UartError error = 2; // Error encountered by the UART module.
+}
+
+// Message representing a UART request.
+message UartReq {
+  oneof type {
+    bytes send_data = 1;
+  }
+}
+
+// Message representing data for the UART interface.
+message UartData {
+  oneof type {
+    UartStop stop = 1;     // Stop UART interface.
+    UartCfg config = 2;    // Configuration for the UART interface.
+    UartStatus status = 3; // Status of the UART interface.
+    UartReq request = 4;   // UART request data.
+  }
+}

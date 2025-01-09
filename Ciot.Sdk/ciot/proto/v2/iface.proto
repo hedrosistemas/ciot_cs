@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package Ciot;
+
+// Enum representing different interface types.
+enum IfaceType {
+  IFACE_TYPE_UNKNOWN = 0;      // Unknown interface type.
+  IFACE_TYPE_CUSTOM = 1;       // Custom interface type.
+  IFACE_TYPE_CIOT = 2;         // CIOT interface type.
+  IFACE_TYPE_STORAGE = 3;      // Storage interface type.
+  IFACE_TYPE_SYS = 4;          // System interface type.
+  IFACE_TYPE_UART = 5;         // UART interface type.
+  IFACE_TYPE_USB = 6;          // USB interface type.
+  IFACE_TYPE_TCP = 7;          // TCP interface type.
+  IFACE_TYPE_ETH = 8;          // Ethernet interface type.
+  IFACE_TYPE_WIFI = 9;         // WiFi interface type.
+  IFACE_TYPE_BLE = 10;         // BLE interface type.
+  IFACE_TYPE_BLE_SCN = 11;     // BLE SCN interface type.
+  IFACE_TYPE_BLE_ADV = 12;     // BLE ADV interface type.
+  IFACE_TYPE_GPIO = 13;        // GPIO interface type.
+  IFACE_TYPE_NTP = 14;         // NTP interface type.
+  IFACE_TYPE_OTA = 15;         // OTA interface type.
+  IFACE_TYPE_DFU = 16;         // DFU interface type.
+  IFACE_TYPE_HTTP_CLIENT = 17; // HTTP Client interface type.
+  IFACE_TYPE_HTTP_SERVER = 18; // HTTP Server interface type.
+  IFACE_TYPE_MQTT_CLIENT = 19; // MQTT interface type.
+  IFACE_TYPE_SOCKET = 20;      // Socket interface type.
+  IFACE_TYPE_BRIDGE = 21;      // Bridge interface type.
+  IFACE_TYPE_IOTA_CLIENT = 22; // IOTA client interface type.
+  IFACE_TYPE_IOTA_SERVER = 23; // IOTA server interface type.
+}
+
+// Enum representing different states of the interface request.
+enum IfaceReqState {
+  IFACE_REQ_STATE_IDLE = 0;     // Idle. No request sended or received.
+  IFACE_REQ_STATE_SENDED = 1;   // Request sended
+  IFACE_REQ_STATE_RECEIVED = 3; // Request received
+}
+
+// Message representing information about an interface.
+message IfaceInfo {
+  uint32 id = 1;      // Interface ID.
+  IfaceType type = 2; // Interface type.
+}
+
+// Message representing interface request status.enum
+message IfaceReqStatus {
+  uint32 id = 1;            // Request message ID
+  IfaceReqState state = 2;  // Request state
+  uint32 data_type = 3;     // Request message data type
+  IfaceInfo iface = 4;      // Interface information
+}

@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package Ciot;
+
+// Enum representing the state of the HTTP server.
+enum HttpServerState {
+  HTTP_SERVER_STATE_STOPPED = 0; // The HTTP server is stopped.
+  HTTP_SERVER_STATE_STARTED = 1; // The HTTP server is started.
+  HTTP_SERVER_STATE_ERROR = 2;   // The HTTP server encountered an error.
+}
+
+// Message used to stop HTTP server interface
+message HttpServerStop {
+
+}
+
+// Message representing HTTP server configuration.
+message HttpServerCfg {
+  string address = 1; // Address of the HTTP server.
+  string route = 2;   // Route for the HTTP server.
+  uint32 port = 3;    // Port number for the HTTP server.
+  string root = 4;    // Server files root directory
+}
+
+// Message representing HTTP server status.
+message HttpServerStatus {
+  HttpServerState state = 1; // State of the HTTP server.
+  int32 error = 2;           // Error code, if any.
+}
+
+// Message representing an HTTP server request.
+message HttpServerReq {}
+
+// Message representing HTTP server data.
+message HttpServerData {
+  oneof type {
+    HttpServerStop stop = 1;     // Stop HTTP server.
+    HttpServerCfg config = 2;    // Configuration for the HTTP server.
+    HttpServerStatus status = 3; // Status of the HTTP server.
+    HttpServerReq request = 4;   // HTTP server request data.
+  }
+}

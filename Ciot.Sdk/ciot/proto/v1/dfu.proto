@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package Ciot;
+
+import "ciot/proto/v1/errors.proto";
+
+// Possible dfu states
+enum DfuState {
+  // Idle state
+  DFU_STATE_IDLE = 0;
+  // Dfu Starting
+  DFU_STATE_STARTING = 1;
+  // Dfu Interrface started
+  DFU_STATE_STARTED = 2;
+  // Dfu in progress
+  DFU_STATE_IN_PROGRESS = 3;
+  // Dfu completed
+  DFU_STATE_COMPLETED = 4;
+  // Dfu error
+  DFU_STATE_ERROR = 5;
+}
+
+// Dfu request types
+enum DfuReqType {
+  DFU_REQ_TYPE_UNKOWN = 0;   // Unknown request type
+}
+
+// Dfu types
+enum DfuType {
+  DFU_TYPE_UNKNOWN = 0; // Unknown type
+  DFU_TYPE_UART = 1;    // Dfu over uart
+  DFU_TYPE_USB = 2;     // Dfu over USB
+  DFU_TYPE_BLE = 3;     // Dfu over bluetooth low energy
+}
+
+// Dfu configuration
+message DfuCfg { DfuType type = 1; }
+
+// Dfu status
+message DfuStatus {
+  DfuState state = 1;       // Dfu current state
+  int32 code = 2;           // Dfu response/status code
+  Ciot.Err error = 3;        // Dfu error code
+  uint32 image_size = 4;    // Dfu image size
+  uint32 image_written = 5; // Dfu image written on client
+}
+
+// Dfu request
+message DfuReq {
+    DfuReqType type = 1;    // Request type
+}
+
+// Dfu data
+message DfuData {
+    DfuCfg config = 1;          // Dfu configuration data
+    DfuStatus status = 2;       // Dfu status data
+    DfuReq request = 3;     // Dfu request data
+}

@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package Ciot;
+
+// Enum representing the state of the USB module.
+enum UsbState {
+  USB_STATE_STOPPED = 0;      // USB module is stopped.
+  USB_STATE_STARTED = 1;      // USB module is started.
+  USB_STATE_CIOT_S_ERROR = 3; // USB module encountered CIOT-S error.
+}
+
+// Enum representing different types of USB requests.
+// enum UsbReqType {
+//   USB_REQ_TYPE_UNKOWN = 0;             // Unknown USB request type.
+//   USB_REQ_TYPE_SEND_DATA = 1;          // Send data over USB.
+//   USB_REQ_TYPE_SEND_BYTES = 2;         // Send bytes over USB.
+// }
+
+// Stop USB interface
+message UsbStop {}
+
+// Message representing configuration for the USB module.
+message UsbCfg {
+  bool bridge_mode = 1; // Flag indicating whether bridge mode is enabled.
+}
+
+// Message representing status for the USB module.
+message UsbStatus {
+  UsbState state = 1; // State of the USB module.
+}
+
+// Message representing data for a USB request.
+message UsbReq {
+  oneof type {
+    bytes send_data = 1;      // Send data over USB.
+    bytes send_bytes = 2;     // Send bytes over USB.
+  }
+}
+
+// Message representing data for the USB module.
+message UsbData {
+  oneof type {
+    UsbStop stop = 1;     // Stop USB interface
+    UsbCfg config = 2;    // Configuration for the USB module.
+    UsbStatus status = 3; // Status of the USB module.
+    UsbReq request = 4;   // USB request data.
+  }
+}

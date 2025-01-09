@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package Ciot;
+
+// Enum representing the state of the storage module.
+enum StorageState {
+  STORAGE_STATE_IDLE = 0;          // Storage module is idle.
+}
+
+// Enum representing different types of storage requests.
+enum StorageReqType {
+  STORAGE_REQ_TYPE_UNKOWN = 0;     // Unknown storage request type.
+  STORAGE_REQ_TYPE_REQ_SAVE = 1;   // Request to save data to storage.
+  STORAGE_REQ_TYPE_REQ_LOAD = 2;   // Request to load data from storage.
+  STORAGE_REQ_TYPE_REQ_DELETE = 3; // Request to delete data from storage.
+  STORAGE_REQ_TYPE_REQ_FORMAT = 4; // Request to format the storage.
+}
+
+// Enum representing different types of storage.
+enum StorageType {
+  STORAGE_TYPE_UNKNOWN = 0;         // Unknown storage type.
+  STORAGE_TYPE_EEPROM = 1;          // EEPROM storage type.
+  STORAGE_TYPE_FLASH = 2;           // Flash storage type.
+  STORAGE_TYPE_FS = 3;              // File system storage type.
+  STORAGE_TYPE_PARTITION = 4;       // Partition storage type.
+}
+
+// Message representing configuration for the storage module.
+message StorageCfg {
+  StorageType type = 1;             // Type of storage.
+}
+
+// Message representing status for the storage module.
+message StorageStatus {
+  StorageState state = 1;           // State of the storage module.
+  int32 free_space = 2;             // Storage module free space
+}
+
+// Message representing storage module information.
+message StorageInfo {
+  int32 total_size = 1;
+}
+
+// Message representing data for a storage request.
+message StorageReqData {
+  string path = 1;                  // Path for the storage operation.
+  bytes data = 2;                   // Data for the storage operation.
+}
+
+
+// Message representing a storage request.
+message StorageReq {
+  StorageReqType type = 1;          // Type of the storage request.
+  StorageReqData data = 2;          // Data associated with the request.
+}
+
+// Message representing data for the storage module.
+message StorageData {
+  StorageCfg config = 1;            // Configuration for the storage module.
+  StorageStatus status = 2;          // Status of the storage module.
+  StorageReq request = 3;            // Storage request data.
+  StorageInfo info = 4;              // Storage information data.
+}

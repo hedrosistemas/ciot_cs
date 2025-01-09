@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package Ciot;
+
+import "ciot/proto/v1/iface.proto";
+
+// Enum representing the state of CIOT.
+enum CiotState {
+  CIOT_STATE_IDLE = 0;     // CIOT core is in an idle state.
+  CIOT_STATE_STARTING = 1; // CIOT core is starting.
+  CIOT_STATE_STARTED = 2;  // CIOT core is started.
+  CIOT_STATE_BUSY = 3;     // CIOT core is busy.
+  CIOT_STATE_ERROR = -1;   // CIOT core encountered an error.
+}
+
+// Enum representing different types of CIOT requests.
+enum CiotReqType {
+  CIOT_REQ_TYPE_UNKOWN = 0; // Unknown request type.
+  CIOT_REQ_TYPE_SAVE_CFG = 1;   // Request to save current interface configuration.
+  CIOT_REQ_TYPE_CREATE_CFG = 2; // Request to create an configuration
+  CIOT_REQ_TYPE_DELETE_CFG = 3; // Request to delete interface configuration.
+  CIOT_REQ_TYPE_PROXY_MSG = 4;  // Request to proxy message.
+}
+
+// Enum representing different serialization types for CIOT.
+enum CiotSerializationType {
+  CIOT_SERIALIZATION_PROTOBUF = 0; // Protocol Buffers serialization type.
+}
+
+// Message representing CIOT configuration.
+message CiotCfg {}
+
+// Message representing CIOT information.
+message CiotInfo {
+  bytes version = 1; // CIOT library version
+  bytes ifaces = 2;  // CIOT ifaces type list
+}
+
+// Message representing CIOT status.
+message CiotStatus {
+  CiotState state = 1; // State of the CIOT device.
+}
+
+// Message representing a CIOT request.
+message CiotReq {
+  CiotReqType type = 1; // Type of the CIOT request.
+  Ciot.IfaceInfo iface = 2;  // Target interface information.
+}
+
+// Message representing CIOT data.
+message CiotData {
+  CiotCfg config = 1;    // Configuration data.
+  CiotStatus status = 2; // Status of the CIOT device.
+  CiotReq request = 3;   // CIOT request data.
+  CiotInfo info = 4;     // Additional information about the CIOT device.
+}

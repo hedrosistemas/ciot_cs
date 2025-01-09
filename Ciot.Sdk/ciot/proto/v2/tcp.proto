@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package Ciot;
+
+// Enum representing the state of the TCP module.
+enum TcpState {
+  TCP_STATE_STOPPED = 0;       // TCP module is stopped.
+  TCP_STATE_STARTED = 1;       // TCP module is started.
+  TCP_STATE_DISCONNECTING = 2; // TCP module is disconnecting.
+  TCP_STATE_DISCONNECTED = 3;  // TCP module is disconnected.
+  TCP_STATE_CONNECTING = 4;    // TCP module is connecting.
+  TCP_STATE_CONNECTED = 5;     // TCP module is connected.
+  TCP_STATE_ERROR = 6;         // TCP module encountered an error.
+}
+
+// Enum representing the state of the TCP DHCP (Dynamic Host Configuration
+// Protocol).
+enum TcpDhcpState {
+  TCP_DHCP_STATE_IDLE = 0;    // TCP DHCP is idle.
+  TCP_DHCP_STATE_STARTED = 1; // TCP DHCP is started.
+  TCP_DHCP_STATE_STOPPED = 2; // TCP DHCP is stopped.
+}
+
+// Enum representing different TCP DHCP configurations.
+enum TcpDhcpCfg {
+  TCP_DHCP_CFG_NO_CHANGE = 0; // No change in DHCP configuration.
+  TCP_DHCP_CFG_CLIENT = 1;    // Configure as DHCP client.
+  TCP_DHCP_CFG_SERVER = 2;    // Configure as DHCP server.
+  TCP_DHCP_CFG_DISABLED = 3;  // Disable DHCP.
+}
+
+// Stop TCP interface
+message TcpStop {}
+
+// Message representing configuration for the TCP module.
+message TcpCfg {
+  bool disabled = 1;   // Disable TCP interface
+  TcpDhcpCfg dhcp = 2; // DHCP configuration.
+  bytes ip = 3;        // IP address.
+  bytes gateway = 4;   // Gateway address.
+  bytes mask = 5;      // Subnet mask.
+  bytes dns = 6;       // DNS address.
+}
+
+// Message representing DHCP status for the TCP module.
+message TcpDhcpStatus {
+  TcpDhcpState client = 1; // DHCP client status.
+  TcpDhcpState server = 2; // DHCP server status.
+}
+
+// Message representing TCP information.
+message TcpInfo {
+  bytes mac = 1; // MAC address.
+  bytes ip = 2;  // IP address.
+}
+
+// Message representing status for the TCP module.
+message TcpStatus {
+  TcpState state = 1;     // State of the TCP module.
+  uint32 conn_count = 2;  // Connection count.
+  TcpDhcpStatus dhcp = 3; // DHCP status.
+}
+
+// Message representing a TCP request.
+message TcpReq { }
+
+// Message representing data for the TCP module.
+message TcpData {
+  oneof type {
+    TcpStop stop = 1;
+    TcpCfg config = 2;    // Configuration for the TCP module.
+    TcpStatus status = 3; // Status of the TCP module.
+    TcpReq request = 4;   // TCP request data.
+    TcpInfo info = 5;     // TCP information.
+  }
+}

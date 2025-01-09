@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package Ciot;
+
+// Error codes
+enum Err {
+  OK = 0;                  // No error
+  NULL_ARG = 1;            // Null argunment
+  INVALID_ID = 2;          // Invalid ID
+  INVALID_TYPE = 3;        // Invalid Type
+  OVERFLOW = 4;            // Memory overflow
+  NOT_IMPLEMENTED = 5;     // Not implemented
+  NOT_SUPPORTED = 6;       // Not supported
+  BUSY = 7;                // Busy
+  INVALID_STATE = 8;       // Invalid state
+  SERIALIZATION = 9;       // Serialization error
+  DESERIALIZATION = 10;    // Deserialization error
+  SEND_DATA = 11;          // Error sending data
+  RECV_DATA = 12;          // Error on data receive
+  INVALID_SIZE = 13;       // Invalid size
+  CLOSED = 14;             // Closed
+  NOT_FOUND = 15;          // Resource not found
+  VALIDATION_FAILED = 16;  // Validation failed
+  CONNECTION = 17;         // Connection failed
+  DISCONNECTION = 18;      // Disconnection failed
+  EXCEPTION = 19;          // Unknown exception occours
+  INVALID_ARG = 20;        // Invalid argument detected
+  NO_MEMORY = 21;          // Insuficient memory
+  TIMEOUT = 22;            // Timeout
+  MONGOOSE = 23;           // Internal error on mongoose framework
+  IMPOSSIBLE_OP = 24;      // Requested operation is impossible
+  CHECKSUM = 25;           // Checksum validation error
+  PROTOCOL_VIOLATION = 26; // Protocol validation error
+  DATA_LOSS = 27;          // Data loss
+  INVALID_HEADER = 28;     // Invalid message header
+  DISABLED = 29;           // Feature disabled
+  FAIL = 30;               // Operation failed
+  INVALID_INDEX = 31;      // Invalid index
+  INVALID_KEY_SIZE = 32;   // Invalid key size
+  FIFO_READ = 33;          // Error reading fifo data 
+  FIFO_WRITE = 34;         // Error writing data to fifo
+  INVALID_ADDR = 35;       // Invalid address
+  RESOURCES = 36;          // Not enough resources
+  UNKNOWN = 37;            // Unknown error
+  READING = 38;            // Reading error
+  ERASING = 39;            // Erasing error
+  WRITING = 40;            // Writing error
+  INVALID_NAME = 41;       // Invalid name error
+}

@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+// Define the package for the CIOT protocol.
+package Ciot;
+
+// Enum representing the different OTA types
+enum OtaType {
+  OTA_TYPE_DEFAULT = 0;       // Default OTA type used do update firmware
+  OTA_TYPE_DATA_SPIFFS = 1;   // Data SPIFFS OTA type used to update data spiffs partition
+}
+
+// Enum representing the state of the OTA (Over-the-Air) update process.
+enum OtaState {
+  OTA_STATE_IDLE = 0;                  // OTA process is idle.
+  OTA_STATE_INIT = 1;                  // OTA process is initialized.
+  OTA_STATE_IN_PROGRESS = 2;           // OTA process is in progress.
+  OTA_STATE_START = 3;                 // OTA process is starting.
+  OTA_STATE_CONNECTED = 4;             // OTA process is connected.
+  OTA_STATE_CHECKING_DATA = 5;         // OTA process is checking data.
+  OTA_STATE_DECRYPTING = 6;            // OTA process is decrypting data.
+  OTA_STATE_FLASHING = 7;              // OTA process is flashing data.
+  OTA_STATE_UPDATE_BOOT_PARTITION = 8; // OTA process is updating boot partition.
+  OTA_STATE_STATE_DONE = 9;            // OTA process is done.
+  OTA_STATE_ERROR = 10;                // OTA process encountered an error.
+}
+
+// Ota stop message
+message OtaStop {}
+
+// Message representing configuration for the OTA process.
+message OtaCfg {
+  string url = 1;                       // URL for the OTA update.
+  bool force = 2;                       // Force OTA update.
+  bool encrypted = 3;                   // Encrypted OTA update.
+  bool restart = 4;                     // Restart device after OTA update.
+  OtaType type = 5;                     // OTA type
+}
+
+// Message representing status for the OTA process.
+message OtaStatus {
+  OtaState state = 1;                   // State of the OTA process.
+  int32 error = 2;                      // Error code, if any.
+  uint32 image_size = 3;                // Size of the OTA image.
+  uint32 image_written = 4;             // Size of the OTA image already read.
+}
+
+// Message representing an OTA request.
+message OtaReq {}
+
+// Message representing data for the OTA process.
+message OtaData {
+  oneof type {
+    OtaStop stop = 1;       // Stop ota interface.
+    OtaCfg config = 2;      // Configuration for the OTA process.
+    OtaStatus status = 3;   // Status of the OTA process.
+    OtaReq request = 4;     // OTA request data.
+  }
+}

@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package Ciot;
+
+// Enum representing the state of the NTP module.
+enum NtpState {
+  NTP_STATE_RESET = 0;       // NTP state: reset.
+  NTP_STATE_COMPLETED = 1;   // NTP state: completed.
+  NTP_STATE_IN_PROGRESS = 2; // NTP state: in progress.
+}
+
+// Message used to stop NTP client
+message NtpStop {}
+
+// Message representing configuration for the NTP module.
+message NtpCfg {
+  int32 op_mode = 1;       // Operation mode for NTP.
+  int32 sync_mode = 2;     // Synchronization mode for NTP.
+  int32 sync_interval = 3; // Synchronization interval for NTP.
+  string timezone = 4;    // Timezone for NTP.
+  string server1 = 5;     // NTP server 1.
+  string server2 = 6;     // NTP server 2.
+  string server3 = 7;     // NTP server 3.
+}
+
+// Message representing status for the NTP module.
+message NtpStatus {
+  NtpState state = 1;   // State of the NTP module.
+  uint64 last_sync = 2;  // Timestamp of the last synchronization.
+  uint32 sync_count = 3; // Number of synchronizations.
+  bool init = 4;        // Initialization status.
+  bool sync = 5;        // Synchronization status.
+}
+
+// Message representing an NTP request.
+message NtpReq {}
+
+// Message representing data for the NTP module.
+message NtpData {
+  oneof type {
+    NtpStop stop = 1;     // Stop NTP client.
+    NtpCfg config = 2;    // Configuration for the NTP module.
+    NtpStatus status = 3; // Status of the NTP module.
+    NtpReq request = 4;   // NTP request data.
+  }
+}
