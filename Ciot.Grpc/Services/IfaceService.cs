@@ -1,4 +1,5 @@
-﻿using Ciot.Grpc.Common.Stream;
+﻿using Ciot.Protos.V2;
+using Ciot.Grpc.Common.Stream;
 using Ciot.Sdk.Common.Error;
 using Ciot.Sdk.Iface;
 using Google.Protobuf.WellKnownTypes;
@@ -7,7 +8,7 @@ using System.Collections.Concurrent;
 
 namespace Ciot.Grpc.Services
 {
-    public class IfaceService : Ciot.IfaceService.IfaceServiceBase
+    public class IfaceService : Protos.V2.IfaceService.IfaceServiceBase
     {
         IIfaceRepository ifaceRespository; IIfaceManager ifaceManager; ConcurrentDictionary<string, Subscriber<Event>> subscribers;
 

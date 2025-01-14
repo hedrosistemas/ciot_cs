@@ -1,4 +1,4 @@
-using Ciot;
+using Ciot.Protos.V2;
 using Ciot.Grpc.Common.Stream;
 using Ciot.Sdk.Config;
 using Ciot.Sdk.Iface;
