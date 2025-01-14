@@ -1,14 +1,12 @@
-﻿using Ciot.Sdk.Common.Error;
-using Ciot.Sdk.Protos.V2;
+﻿using Ciot.Protos.V2;
+using Ciot.Sdk.Common.Error;
 using LanguageExt;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Ciot.Sdk.Iface
 {
-    public interface IIfaceManager
+    public interface IIfaceManager : IIfaceEventManager
     {
+
         Either<ErrorBase, IfaceInfo> SelectIface(uint id);
 
         Either<ErrorBase, IfaceInfo> GetSelectedIface();
@@ -16,5 +14,9 @@ namespace Ciot.Sdk.Iface
         Either<ErrorBase, IIface> CreateIface(IfaceInfo ifaceInfo);
 
         Either<ErrorBase, Msg> SendMessage(Msg msg);
+
+        Either<ErrorBase, Unit> SubscribeToEvents(SubscribeToEventsRequest request);
+
+        Either<ErrorBase, Unit> UnsubscribeToEvents(IfaceInfo iface);
     }
 }

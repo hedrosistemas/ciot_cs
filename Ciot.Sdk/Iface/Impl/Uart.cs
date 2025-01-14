@@ -1,6 +1,6 @@
-﻿using Ciot.Sdk.Common.Error;
+﻿using Ciot.Protos.V2;
+using Ciot.Sdk.Common.Error;
 using Ciot.Sdk.Decoder;
-using Ciot.Sdk.Protos.V2;
 using LanguageExt;
 using System;
 using System.IO.Ports;
@@ -18,12 +18,17 @@ namespace Ciot.Sdk.Iface.Impl
         private UartCfg cfg;
         private UartStatus status;
 
+        byte[] decoded;
+
         public Uart(IfaceInfo info)
         {
             decoder = new DecoderS();
             status = new UartStatus();
             port = new SerialPort();
             Info = info;
+
+            port.DataReceived += Port_DataReceived;
+            decoded = new byte[1023];
         }
 
         public Err Start(UartCfg cfg)
@@ -135,6 +140,25 @@ namespace Ciot.Sdk.Iface.Impl
             {
                 var decoded = decoder.Encode(bytes);
                 port.Write(decoded, 0, decoded.Length);
+            }
+        }
+
+        private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            byte[] data = new byte[port.BytesToRead];
+            port.Read(data, 0, data.Length);
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                if (decoder.Decode(data[i], out decoded))
+                {
+                    var ev = new Event
+                    {
+                        Type = EventType.Data,
+                        Msg = Msg.Parser.ParseFrom(decoded),
+                    };
+                    OnEvent?.Invoke(this, ev);
+                }
             }
         }
     }

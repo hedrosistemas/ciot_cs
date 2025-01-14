@@ -21,8 +21,6 @@ namespace Ciot.Sdk.Decoder
 
         public bool Decode(byte input, out byte[] output)
         {
-            Console.WriteLine("Decodificando dados");
-
             output = buffer;
 
             if (idx < buffer.Length)
@@ -50,7 +48,14 @@ namespace Ciot.Sdk.Decoder
                     {
                         idx = 0;
                         size = buffer[1] << 8 | buffer[0];
-                        State = DecoderState.Reading;
+                        if(size < buffer.Length)
+                        {
+                            State = DecoderState.Reading;
+                        }
+                        else
+                        {
+                            State = DecoderState.WaitStart;
+                        }
                     }
                     break;
                 case DecoderState.Reading:

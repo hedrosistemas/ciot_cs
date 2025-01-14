@@ -1,5 +1,4 @@
-﻿using Ciot.Sdk.Protos.V2;
-using Grpc.Core;
+﻿using Grpc.Core;
 
 namespace Ciot.Sdk.Common.Error
 {

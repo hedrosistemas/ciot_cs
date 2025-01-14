@@ -1,24 +1,42 @@
-﻿using Ciot.Sdk.Common.Error;
+﻿using Ciot.Protos.V2;
+using Ciot.Sdk.Common.Error;
 using Ciot.Sdk.Config;
 using Ciot.Sdk.Iface.Impl;
 using Google.Protobuf;
 using LanguageExt;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Ciot.Sdk.Iface
 {
-    public class IfaceManager : IIfaceManager
+    public class IfaceManager : IfaceEventManager, IIfaceManager
     {
         private readonly IConfigRepository configRepository;
 
         private IfaceInfo selectedIface;
 
+        private const string selectedIfaceFile = "selectedIface.json";
+
+        private Dictionary<uint, IIface> ifaces;
+
         public IfaceManager(IConfigRepository configRepository) 
-        { 
+        {
             this.configRepository = configRepository;
+            ifaces = new Dictionary<uint, IIface>();
+            if (File.Exists(selectedIfaceFile))
+            {
+                var content = File.ReadAllText(selectedIfaceFile);
+                selectedIface = Newtonsoft.Json.JsonConvert.DeserializeObject<IfaceInfo>(content);
+            }
         }
 
         public Either<ErrorBase, IIface> CreateIface(IfaceInfo iface)
         {
+            if (ifaces.ContainsKey(iface.Id) && ifaces[iface.Id].Info.Type == iface.Type)
+            {
+                return Either<ErrorBase, IIface>.Right(ifaces[iface.Id]);
+            }
+
             var result = configRepository.GetConfigById(iface.Id);
             return result.Match(
                 r =>
@@ -27,7 +45,7 @@ namespace Ciot.Sdk.Iface
 
                     switch (iface.Type)
                     {
-                        case IfaceType.Unknown:
+                        case IfaceType.Undefined:
                             return new ErrorNotImplemented("Interface not implemented");
                         case IfaceType.Custom:
                             return new ErrorNotImplemented("Interface not implemented");
@@ -115,6 +133,7 @@ namespace Ciot.Sdk.Iface
                 r =>
                 {
                     selectedIface = r.Iface;
+                    File.WriteAllText(Newtonsoft.Json.JsonConvert.SerializeObject(r), selectedIfaceFile);
                     return Either<ErrorBase, IfaceInfo>.Right(selectedIface);
                 },
                 l => l);
@@ -150,6 +169,22 @@ namespace Ciot.Sdk.Iface
                 {
                     return l;
                 });
+        }
+
+        public Either<ErrorBase, Unit> SubscribeToEvents(SubscribeToEventsRequest request)
+        {
+            var result = CreateIface(request.Iface);
+            return result.Match(
+                r => Subscribe(r),
+                l => l);
+        }
+
+        public Either<ErrorBase, Unit> UnsubscribeToEvents(IfaceInfo iface)
+        {
+            var result = CreateIface(iface);
+            return result.Match(
+                r => Unsubscribe(r),
+                l => l);
         }
     }
 }
