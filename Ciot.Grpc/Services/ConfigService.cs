@@ -1,10 +1,11 @@
-﻿using Ciot.Sdk.Config;
+﻿using Ciot.Protos.V2;
+using Ciot.Sdk.Config;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 
 namespace Ciot.Grpc.Services
 {
-    public class ConfigService(IConfigRepository configRepository) : Ciot.ConfigService.ConfigServiceBase
+    public class ConfigService(IConfigRepository configRepository) : Protos.V2.ConfigService.ConfigServiceBase
     {
         public override Task<SetConfigResponse> SetConfig(SetConfigRequest request, ServerCallContext context)
         {

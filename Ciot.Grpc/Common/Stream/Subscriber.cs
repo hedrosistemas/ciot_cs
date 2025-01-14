@@ -1,4 +1,4 @@
-﻿using Ciot.Grpc.Common.Stream;
+﻿using Ciot.Protos.V2;
 using System.Collections.Concurrent;
 
 namespace Ciot.Grpc.Common.Stream
