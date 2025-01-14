@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package Ciot;
+
+import "ciot/proto/v2/tcp.proto";
+
+option csharp_namespace = "Ciot.Protos.V2";
+
+// Enum representing the type of Wi-Fi connection.
+enum WifiType {
+  WIFI_TYPE_STA = 0; // Wi-Fi station mode.
+  WIFI_TYPE_AP = 1;  // Wi-Fi access point mode.
+}
+
+// Enum representing the state of Wi-Fi scanning.
+enum WifiScanState {
+  WIFI_SCAN_STATE_IDLE = 0;     // Wi-Fi scan is idle.
+  WIFI_SCAN_STATE_SCANNING = 1; // Wi-Fi scan is in progress.
+  WIFI_SCAN_STATE_SCANNED = 2;  // Wi-Fi scan completed successfully.
+  WIFI_SCAN_STATE_ERROR = 3;   // Error occurred during Wi-Fi scan.
+}
+
+// Enum representing the state of the Wi-Fi interface.
+enum WifiState {
+  WIFI_STATE_IDLE = 0; // Wi-Fi interface is idle.
+}
+
+// Message representing information about a Wi-Fi access point.
+message WifiApInfo {
+  bytes bssid = 1;    // BSSID (MAC address) of the access point.
+  string ssid = 2;    // SSID (network name) of the access point.
+  int32 rssi = 3;     // Received Signal Strength Indicator (RSSI) of the access point.
+  int32 authmode = 4; // Authentication mode of the access point.
+}
+
+// Stop Wi-Fi interface.
+message WifiStop {}
+
+// Message representing configuration for the Wi-Fi interface.
+message WifiCfg {
+  bool disabled = 1;   // Disable Wi-Fi interface
+  string ssid = 2;     // SSID of the Wi-Fi network.
+  string password = 3; // Password for the Wi-Fi network.
+  WifiType type = 4;   // Type of Wi-Fi connection.
+  Ciot.TcpCfg tcp = 5; // TCP configuration for Wi-Fi communication.
+}
+
+// Message representing status for the Wi-Fi interface.
+message WifiStatus {
+  uint32 disconnect_reason = 1; // Reason for Wi-Fi disconnection.
+  Ciot.TcpStatus tcp = 2;      // Status of the TCP connection over Wi-Fi.
+}
+
+message WifiInfo {
+  Ciot.TcpInfo tcp = 1;
+  WifiApInfo ap = 2;
+}
+
+// Message representing scan request
+message WifiReqScan {}
+
+// Wifi scan result
+message WifiReqScanResult {
+  uint32 count = 1;          // Access point count found by scan request
+}
+
+// Wifi request to get the scanned access point information
+message WifiReqGetAp {
+  uint32 id = 1;             // Access point ID
+}
+
+// Message representing a Wi-Fi request.
+message WifiReq {
+  oneof type {
+    WifiReqScan scan = 1;               // Start wifi scanner
+    WifiReqScanResult scan_result = 2;  // Wifi scanner result
+    WifiReqGetAp get_ap = 3;           // Get acess point information from wifi scanner queue
+    WifiApInfo get_ap_result = 4;       // Get acess point result
+  }
+}
+
+// Message representing data for the Wi-Fi interface.
+message WifiData {
+  oneof type {
+    WifiStop stop = 1;                // Stop Wi-Fi interface.
+    WifiCfg config = 2;               // Configuration for the Wi-Fi interface.
+    WifiStatus status = 3;            // Status of the Wi-Fi interface.
+    WifiReq request = 4;              // Wi-Fi request data.
+    WifiInfo info = 5;                // TCP information.
+  }
+}

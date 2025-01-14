@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package Ciot;
+
+option csharp_namespace = "Ciot.Protos.V2";
+
+// Enum representing the state of gpio
+enum GpioState {
+  GPIO_STATE_LOW = 0;      // Gpio is low
+  GPIO_STATE_HIGH = 1;     // Gpio is high
+  GPIO_STATE_BLINK = 2;    // Gpio is alternating it state once
+  GPIO_STATE_BLINKED = 3;  // Gpio alternated it state once
+  GPIO_STATE_BLINKING = 4; // Gpio is alternating it state
+  GPIO_STATE_ERROR = 5;    // Gpio is in error
+}
+
+// Enum representing gpio modes
+enum GpioMode {
+  GPIO_MODE_DISABLED = 0; // Disable gpio
+  GPIO_MODE_INPUT = 1;    // Enable gpio input mode
+  GPIO_MODE_OUTPUT = 2;   // Enable gpio output mode
+}
+
+// Enum representing gpio internal pullup/pulldown modes
+enum GpioPull {
+  GPIO_PULL_DISABLED = 0; // Disable gpio internal pullup/pulldown
+  GPIO_PULL_UP = 1;       // Enable gpio internal pullup
+  GPIO_PULL_DOWN = 2;     // Enable gpio internal pulldown
+}
+
+// Gpio stop message
+message GpioStop {
+  GpioCfg cfg = 1; // Config of gpio to be stopped
+}
+
+// Gpio pin configuration
+message GpioPinCfg {
+  uint32 num = 1;       // Gpio pin number
+  GpioMode mode = 2;    // Gpio mode
+  GpioPull pull = 3;    // Gpio pullup/pulldown configuration
+}
+
+// Message representing gpio configuration
+message GpioCfg {
+  repeated GpioPinCfg pins = 1;  // Pins list configuration
+  uint32 blink_interval = 2;     // Interval between gpio blinks in miliseconds
+}
+
+// Message used to read/set all gpio states
+message GpioStatus {
+  bytes states = 1; // Gpio states list
+}
+
+// Message used to set/read signle gpio state info
+message GpioStateInfo {
+  uint32 num = 1;      // Gpio num
+  GpioState state = 2; // Gpio state
+}
+
+// Message representing an gpio request
+message GpioReq {
+  oneof type {
+    GpioCfg config = 2;      // Configuration request
+    GpioStatus status = 3;   // Status request.
+    GpioStateInfo state = 4; // Set/read sate request
+  }
+}
+
+// Message representing gpio data
+message GpioData {
+  oneof type {
+    GpioStop stop = 1;     // Stop gpio
+    GpioCfg config = 2;    // Configuration data
+    GpioStatus status = 3; // Status data
+    GpioReq request = 4;   // Request data
+  }
+}

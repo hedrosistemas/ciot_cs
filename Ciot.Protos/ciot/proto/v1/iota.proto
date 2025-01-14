@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package Ciot;
+
+import "ciot/proto/v1/sys.proto";
+import "ciot/proto/v1/iface.proto";
+import "ciot/proto/v1/errors.proto";
+
+// Enum representing the different IOTA types
+enum IOtaType {
+  IOTA_TYPE_DEFAULT = 0;       // Default IOTA type used do update firmware
+  IOTA_TYPE_DATA_SPIFFS = 1;   // Data SPIFFS OTA type used to update data spiffs partition
+
+}
+
+// Enum representing the state of the IOTA (Over-the-Air) update process.
+enum IOtaState {
+  IOTA_STATE_IDLE = 0;                  // IOTA process is idle.
+  IOTA_STATE_INIT = 1;                  // IOTA process is initialized.
+  IOTA_STATE_IN_PROGRESS = 2;           // IOTA process is in progress.
+  IOTA_STATE_DONE = 3;                  // IOTA process is done.
+  IOTA_STATE_ERROR = 4;                 // IOTA process encountered an error.
+}
+
+// Message representing configuration for the IOTA process.
+message IOtaCfg {
+  IOtaType type = 1;        // IOTA type
+  string filepath = 2;      // IOTA image filepath
+  uint32 filesize = 3;      // IOTA image filesize
+  IfaceInfo iface_info = 4; // Target IOTA iface information
+  SysInfo sys_info = 5;     // Target system information
+}
+
+// Message representing status for the IOTA process.
+message IOtaStatus {
+  IOtaState state = 1;                  // State of the IOTA process.
+  Err error = 2;                        // Error code, if any.
+  uint32 image_size = 3;                // Size of the IOTA image.
+  uint32 image_written = 4;             // Size of the IOTA image already read.
+}
+
+// Message representing the begin request for the IOTA process
+message IOtaReqBegin {
+  IOtaCfg cfg = 1;        // IOTA configuration
+  Err error = 2;          // Error code
+}
+
+// Message used by IOTA to update image using an existent interface
+message IOtaReqWrite {
+  uint32 packet_id = 1;     // Data packet ID
+  uint32 packet_count = 2;  // Data packet count
+  bytes packet = 3;         // Data packet content
+  Err error = 4;            // Error code
+}
+
+message IOtaReq {
+  oneof type {
+    IOtaReqBegin begin = 1;     // IOTA begin request
+    IOtaReqWrite write = 2;     // IOTA write request          
+  }
+}
+
+// Message representing data for the IOTA process.
+message IOtaData {
+  IOtaCfg config = 1;                // Configuration for the IOTA process.
+  IOtaStatus status = 2;             // Status of the IOTA process.
+  IOtaReq request = 3;               // IOta request.
+}

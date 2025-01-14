@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package Ciot;
+
+option csharp_namespace = "Ciot.Protos.V2";
+
+// Error codes
+enum Err {
+  ERR_OK = 0;                  // No error
+  ERR_NULL_ARG = 1;            // Null argunment
+  ERR_INVALID_ID = 2;          // Invalid ID
+  ERR_INVALID_TYPE = 3;        // Invalid Type
+  ERR_OVERFLOW = 4;            // Memory overflow
+  ERR_NOT_IMPLEMENTED = 5;     // Not implemented
+  ERR_NOT_SUPPORTED = 6;       // Not supported
+  ERR_BUSY = 7;                // Busy
+  ERR_INVALID_STATE = 8;       // Invalid state
+  ERR_SERIALIZATION = 9;       // Serialization error
+  ERR_DESERIALIZATION = 10;    // Deserialization error
+  ERR_SEND_DATA = 11;          // Error sending data
+  ERR_RECV_DATA = 12;          // Error on data receive
+  ERR_INVALID_SIZE = 13;       // Invalid size
+  ERR_CLOSED = 14;             // Closed
+  ERR_NOT_FOUND = 15;          // Resource not found
+  ERR_VALIDATION_FAILED = 16;  // Validation failed
+  ERR_CONNECTION = 17;         // Connection failed
+  ERR_DISCONNECTION = 18;      // Disconnection failed
+  ERR_EXCEPTION = 19;          // Unknown exception occours
+  ERR_INVALID_ARG = 20;        // Invalid argument detected
+  ERR_NO_MEMORY = 21;          // Insuficient memory
+  ERR_TIMEOUT = 22;            // Timeout
+  ERR_MONGOOSE = 23;           // Internal error on mongoose framework
+  ERR_IMPOSSIBLE_OP = 24;      // Requested operation is impossible
+  ERR_CHECKSUM = 25;           // Checksum validation error
+  ERR_PROTOCOL_VIOLATION = 26; // Protocol validation error
+  ERR_DATA_LOSS = 27;          // Data loss
+  ERR_INVALID_HEADER = 28;     // Invalid message header
+  ERR_DISABLED = 29;           // Feature disabled
+  ERR_FAIL = 30;               // Operation failed
+  ERR_INVALID_INDEX = 31;      // Invalid index
+  ERR_INVALID_KEY_SIZE = 32;   // Invalid key size
+  ERR_FIFO_READ = 33;          // Error reading fifo data
+  ERR_FIFO_WRITE = 34;         // Error writing data to fifo
+  ERR_INVALID_ADDR = 35;       // Invalid address
+  ERR_RESOURCES = 36;          // Not enough resources
+  ERR_UNKNOWN = 37;            // Unknown error
+  ERR_READING = 38;            // Reading error
+  ERR_ERASING = 39;            // Erasing error
+  ERR_WRITING = 40;            // Writing error
+  ERR_INVALID_NAME = 41;       // Invalid name error
+  ERR_DECODER_MISSING = 42;    // Decoder is missing
+  ERR_SERIALIZER_MISSING = 43; // Serializer is missing
+  ERR_SMALL_RAW = 44;          // Data size is greater than raw bytes array
+}

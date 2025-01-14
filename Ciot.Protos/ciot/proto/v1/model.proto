@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package Ciot;
+
+// Enum representing the state of the Model.
+enum ModelState {
+  MODEL_STATE_IDLE = 0; // Model is idle.
+}
+
+// Enum representing different types of Model requests.
+enum ModelReqType {
+  MODEL_REQ_TYPE_UNKOWN = 0; // Unknown request type.
+}
+
+// Message representing Model configuration.
+message ModelCfg {}
+
+// Message representing Model status.
+message ModelStatus {
+  ModelState state = 1; // State of the Model.
+  int32 error = 2;      // Error code, if any.
+}
+
+message ModelInfo {}
+
+// Message representing an Model request.
+message ModelReq {
+  ModelReqType type = 1; // Type of the Model request.
+}
+
+// Message representing Model data.
+message ModelData {
+  ModelCfg config = 1;    // Configuration for the Model.
+  ModelStatus status = 2; // Status of the Model.
+  ModelReq request = 3;   // Model request.
+  ModelInfo info = 4;     // Info of the Model.
+}

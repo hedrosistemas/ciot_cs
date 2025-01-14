@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package Ciot;
+
+// Enum representing the state of gpio
+enum GpioState
+{
+    GPIO_STATE_LOW = 0;         // Gpio is low
+    GPIO_STATE_HIGH = 1;        // Gpio is high
+    GPIO_STATE_BLINK = 2;       // Gpio is alternating it state once
+    GPIO_STATE_BLINKED = 3;     // Gpio alternated it state once
+    GPIO_STATE_BLINKING = 4;    // Gpio is alternating it state
+    GPIO_STATE_ERROR = 5;       // Gpio is in error
+}
+
+// Enum representing gpio requests
+enum GpioReqType
+{
+    GPIO_REQ_TYPE_UNKNOWN = 0;      // Unknown request
+    GPIO_REQ_TYPE_CONFIG = 1;       // Config request
+    GPIO_REQ_TYPE_SET_STATUS = 2;   // Set status request. Can be used to set all gpio states with a single message
+    GPIO_REQ_TYPE_SET_STATE = 3;    // Set state request. Set the state of a single gpio
+    GPIO_REQ_TYPE_GET_STATUS = 4;   // Get gpio status. Can be used to get all gpio states with a single message
+    GPIO_REQ_TYPE_GET_STATE = 5;    // Get gpio state. Can be used to get the state of a single gpio
+}
+
+// Enum representing gpio modes 
+enum GpioMode
+{
+    GPIO_MODE_DISABLED = 0;     // Disable gpio
+    GPIO_MODE_INPUT = 1;        // Enable gpio input mode
+    GPIO_MODE_OUTPUT = 2;       // Enable gpio output mode
+}
+
+// Enum representing gpio internal pullup/pulldown modes
+enum GpioPull
+{
+    GPIO_PULL_DISABLED = 0; // Disable gpio internal pullup/pulldown
+    GPIO_PULL_UP = 1;       // Enable gpio internal pullup
+    GPIO_PULL_DOWN = 2;     // Enable gpio internal pulldown
+}
+
+// Message representing gpio configuration
+message GpioCfg
+{
+    bytes pins = 1;         // Gpio pin list
+    bytes modes = 2;        // Gpio pin modes list
+    bytes pull = 3;         // Gpio pull configurations list
+    uint32 blink_interval = 5;  // Interval between gpio blinks in miliseconds
+}
+
+// Message used to read/set all gpio states
+message GpioStatus
+{
+    bytes states = 1;   // Gpio states list
+}
+
+// Message used to set/read signle gpio state info
+message GpioStateInfo
+{
+    uint32 num = 1;         // Gpio num
+    GpioState state = 2;    // Gpio state
+}
+
+// Message representing an gpio request
+message GpioReq
+{
+    GpioReqType type = 1;       // Request type
+    GpioCfg config = 2;         // Configuration request
+    GpioStatus status = 3;      // Set/read status request
+    GpioStateInfo state = 4;    // Set/read sate request
+}
+
+// Message representing gpio data
+message GpioData
+{
+    GpioCfg config = 1;     // Configuration data
+    GpioStatus status = 2;  // Status data
+    GpioReq request = 3;    // Request data
+}

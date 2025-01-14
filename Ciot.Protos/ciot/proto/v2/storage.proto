@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package Ciot;
+
+option csharp_namespace = "Ciot.Protos.V2";
+
+// Enum representing the state of the storage module.
+enum StorageState {
+  STORAGE_STATE_IDLE = 0;          // Storage module is idle.
+}
+
+// Enum representing different types of storage.
+enum StorageType {
+  STORAGE_TYPE_UNKNOWN = 0;         // Unknown storage type.
+  STORAGE_TYPE_EEPROM = 1;          // EEPROM storage type.
+  STORAGE_TYPE_FLASH = 2;           // Flash storage type.
+  STORAGE_TYPE_FS = 3;              // File system storage type.
+}
+
+// Stop storage interface
+message StorageStop {}
+
+// Message representing configuration for the storage module.
+message StorageCfg {
+  StorageType type = 1;             // Type of storage.
+}
+
+// Message representing status for the storage module.
+message StorageStatus {
+  StorageState state = 1;           // State of the storage module.
+  int32 free_space = 2;             // Storage module free space
+}
+
+// Message representing storage module information.
+message StorageInfo {
+  int32 total_size = 1;
+}
+
+// Message representing data for a storage request.
+message StorageFile {
+  string path = 1;                  // Path for the storage operation.
+  bytes data = 2;                   // Data for the storage operation.
+}
+
+// Message representing a request to delete a file.
+message StorageReqDelete {
+  string path = 1;                  // Path for the storage operation.
+}
+
+// Message representing a request to format the storage interface.
+message StorageReqFormat {}
+
+// Message representing a storage request.
+message StorageReq {
+  oneof type {
+    StorageFile save = 1;
+    StorageFile load = 2;
+    StorageFile delete = 3;
+    StorageReqFormat format = 4;
+  }
+}
+
+// Message representing data for the storage module.
+message StorageData {
+  oneof type {
+    StorageStop stop = 1;       // Stop storage interface
+    StorageCfg config = 2;      // Configuration for the storage module.
+    StorageStatus status = 3;   // Status of the storage module.
+    StorageReq request = 4;     // Storage request data.
+    StorageInfo info = 5;       // Storage information data.
+  }
+}

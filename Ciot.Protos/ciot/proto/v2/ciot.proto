@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package Ciot;
+
+import "ciot/proto/v2/iface.proto";
+
+option csharp_namespace = "Ciot.Protos.V2";
+
+// Enum representing the state of CIOT.
+enum State {
+  STATE_IDLE = 0;     // CIOT core is in an idle state.
+  STATE_STARTING = 1; // CIOT core is starting.
+  STATE_STARTED = 2;  // CIOT core is started.
+  STATE_BUSY = 3;     // CIOT core is busy.
+  STATE_ERROR = -1;   // CIOT core encountered an error.
+}
+
+// Enum representing different serialization types for CIOT.
+enum SerializationType {
+  SERIALIZATION_PROTOBUF = 0; // Protocol Buffers serialization type.
+}
+
+// Message representing CIOT information.
+message Info {
+  bytes version = 1;              // CIOT library version
+  repeated IfaceType ifaces = 2;  // CIOT ifaces types list
+}
+
+// Message representing CIOT status.
+message Status {
+  State state = 1; // State of the CIOT device.
+}
+
+// Message representing a CIOT request.
+message Req {
+  oneof type {
+    IfaceInfo save_cfg = 1;     // Save interface configuration
+    IfaceInfo delete_cfg = 2;   // Delete interface configuration
+  }
+}
+
+// Message representing CIOT data.
+message Data {
+  oneof type {
+    Status status = 2; // Status of the CIOT device.
+    Req request = 3;   // CIOT request data.
+    Info info = 4;     // Additional information about the CIOT device.
+  }
+}
