@@ -1,12 +1,24 @@
-﻿using Ciot.Sdk.Iface;
-using Ciot.Sdk.Protos.V2;
+﻿using Ciot.Grpc.Common.Stream;
+using Ciot.Sdk.Common.Error;
+using Ciot.Sdk.Iface;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using System.Collections.Concurrent;
 
 namespace Ciot.Grpc.Services
 {
-    public class IfaceService(IIfaceRepository ifaceRespository, IIfaceManager ifaceManager) : Sdk.Protos.V2.IfaceService.IfaceServiceBase
+    public class IfaceService : Ciot.IfaceService.IfaceServiceBase
     {
+        IIfaceRepository ifaceRespository; IIfaceManager ifaceManager; ConcurrentDictionary<string, Subscriber<Event>> subscribers;
+
+        public IfaceService(IIfaceRepository ifaceRespository, IIfaceManager ifaceManager, ConcurrentDictionary<string, Subscriber<Event>> subscribers)
+        {
+            this.ifaceRespository = ifaceRespository;
+            this.ifaceManager = ifaceManager;
+            this.subscribers = subscribers;
+            this.ifaceManager.OnEvent += IfaceManager_OnEvent;
+        }
+
         public override Task<CreateIfaceResponse> CreateIface(CreateIfaceRequest request, ServerCallContext context)
         {
             var response = new CreateIfaceResponse();
@@ -111,6 +123,60 @@ namespace Ciot.Grpc.Services
                     });
                 },
                 l => throw l);
+        }
+
+        public override async Task SubscribeToEvents(SubscribeToEventsRequest request, IServerStreamWriter<Event> responseStream, ServerCallContext context)
+        {
+            var subscriber = new Subscriber<Event>(request.Iface);
+
+            if(subscribers.TryAdd(request.Id, subscriber))
+            {
+                subscribers[request.Id] = subscriber;
+            }
+            else
+            {
+                throw new ErrorInternal("Error adding subscriber to dictionary");
+            }
+
+            var result = ifaceManager.SubscribeToEvents(request);
+            await result.Match(
+                async r =>
+                {
+                    try
+                    {
+                        while (!context.CancellationToken.IsCancellationRequested) 
+                        {
+                            await subscriber.DataAvailable.WaitAsync(context.CancellationToken);
+                            while (subscriber.Queue.TryDequeue(out var e))
+                            {
+                                await responseStream.WriteAsync(e);
+                            }
+                        }
+                    }
+                    finally 
+                    {
+                        ifaceManager.UnsubscribeToEvents(request.Iface);
+                        subscribers.TryRemove(request.Id, out _);
+                    }
+                },
+                l => throw l);
+        }
+
+        private void IfaceManager_OnEvent(object? sender, Event e)
+        {
+            if (sender is not IIface iface)
+            {
+                return;
+            }
+
+            foreach (var subscriber in subscribers.Values)
+            {
+                if(subscriber.Iface.Id == iface.Info.Id && subscriber.Iface.Type == iface.Info.Type)
+                {
+                    subscriber.Queue.Enqueue(e);
+                    subscriber.DataAvailable.Set();
+                }
+            }
         }
     }
 }

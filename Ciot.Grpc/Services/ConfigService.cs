@@ -1,12 +1,10 @@
 ﻿using Ciot.Sdk.Config;
-using Ciot.Sdk.Iface;
-using Ciot.Sdk.Protos.V2;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 
 namespace Ciot.Grpc.Services
 {
-    public class ConfigService(IConfigRepository configRepository) : Sdk.Protos.V2.ConfigService.ConfigServiceBase
+    public class ConfigService(IConfigRepository configRepository) : Ciot.ConfigService.ConfigServiceBase
     {
         public override Task<SetConfigResponse> SetConfig(SetConfigRequest request, ServerCallContext context)
         {

@@ -1,21 +1,25 @@
-using Ciot.Grpc.Services;
+using Ciot;
+using Ciot.Grpc.Common.Stream;
 using Ciot.Sdk.Config;
 using Ciot.Sdk.Iface;
+using System.Collections.Concurrent;
 
 var builder = WebApplication.CreateBuilder(args);
+var ifacesSubscribers = new ConcurrentDictionary<string, Subscriber<Event>>();
 
 // Add services to the container.
 builder.Services.AddGrpc();
 builder.Services.AddGrpcReflection();
 
+builder.Services.AddSingleton(ifacesSubscribers);
 builder.Services.AddSingleton<IIfaceRepository, IfaceRepository>();
 builder.Services.AddSingleton<IIfaceManager, IfaceManager>();
 builder.Services.AddSingleton<IConfigRepository, ConfigRepository>();
 
 var app = builder.Build();
 
-app.MapGrpcService<IfaceService>();
-app.MapGrpcService<ConfigService>();
+app.MapGrpcService<Ciot.Grpc.Services.IfaceService>();
+app.MapGrpcService<Ciot.Grpc.Services.ConfigService>();
 
 if (app.Environment.IsDevelopment())
 {
