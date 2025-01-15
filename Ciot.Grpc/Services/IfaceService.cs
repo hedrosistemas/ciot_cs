@@ -160,7 +160,12 @@ namespace Ciot.Grpc.Services
                         subscribers.TryRemove(request.Id, out _);
                     }
                 },
-                l => throw l);
+                l =>
+                {
+                    ifaceManager.UnsubscribeToEvents(request.Iface);
+                    subscribers.TryRemove(request.Id, out _);
+                    throw l;
+                });
         }
 
         private void IfaceManager_OnEvent(object? sender, Event e)

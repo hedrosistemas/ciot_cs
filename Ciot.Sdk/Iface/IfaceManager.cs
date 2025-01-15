@@ -22,12 +22,12 @@ namespace Ciot.Sdk.Iface
         public IfaceManager(IConfigRepository configRepository) 
         {
             this.configRepository = configRepository;
-            ifaces = new Dictionary<uint, IIface>();
             if (File.Exists(selectedIfaceFile))
             {
                 var content = File.ReadAllText(selectedIfaceFile);
                 selectedIface = Newtonsoft.Json.JsonConvert.DeserializeObject<IfaceInfo>(content);
             }
+            ifaces = new Dictionary<uint, IIface>();
         }
 
         public Either<ErrorBase, IIface> CreateIface(IfaceInfo iface)
@@ -106,6 +106,7 @@ namespace Ciot.Sdk.Iface
                     }
 
                     newIface.ProcessData(r.Data);
+                    ifaces.Add(newIface.Info.Id, newIface);
                     return Either<ErrorBase, IIface>.Right(newIface);
                 },
                 l =>
@@ -133,7 +134,7 @@ namespace Ciot.Sdk.Iface
                 r =>
                 {
                     selectedIface = r.Iface;
-                    File.WriteAllText(Newtonsoft.Json.JsonConvert.SerializeObject(r), selectedIfaceFile);
+                    File.WriteAllText(selectedIfaceFile, Newtonsoft.Json.JsonConvert.SerializeObject(selectedIface));
                     return Either<ErrorBase, IfaceInfo>.Right(selectedIface);
                 },
                 l => l);
@@ -153,7 +154,6 @@ namespace Ciot.Sdk.Iface
                     var task = r.SendData(data);
                     task.Wait();
                     var result = task.GetAwaiter().GetResult();
-                    r.Stop();
                     return result.Match(
                         right =>
                         {
