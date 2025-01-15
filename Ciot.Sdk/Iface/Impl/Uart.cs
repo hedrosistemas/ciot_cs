@@ -17,8 +17,9 @@ namespace Ciot.Sdk.Iface.Impl
         private readonly IDecoder decoder;
         private UartCfg cfg;
         private UartStatus status;
+        private TaskCompletionSource<byte[]> decode;
 
-        byte[] decoded;
+        private byte[] decoded;
 
         public Uart(IfaceInfo info)
         {
@@ -26,9 +27,9 @@ namespace Ciot.Sdk.Iface.Impl
             status = new UartStatus();
             port = new SerialPort();
             Info = info;
-
-            port.DataReceived += Port_DataReceived;
             decoded = new byte[1023];
+            decode = new TaskCompletionSource<byte[]>();
+            port.DataReceived += Port_DataReceived;
         }
 
         public Err Start(UartCfg cfg)
@@ -114,14 +115,12 @@ namespace Ciot.Sdk.Iface.Impl
         {
             try
             {
-                Console.WriteLine("Enviando dados");
+                if (!port.IsOpen) port.Open();
+                port.ReadExisting();
                 SendBytes(data);
                 if (decoder != null)
                 {
-                    byte[] result;
-                    Console.WriteLine("Processando dados");
-                    while (decoder.Decode((byte)port.ReadByte(), out result) == false) ;
-                    return await Task.FromResult(result);
+                    return await decode.Task;
                 }
                 else
                 {
@@ -152,6 +151,10 @@ namespace Ciot.Sdk.Iface.Impl
             {
                 if (decoder.Decode(data[i], out decoded))
                 {
+                    if(decode.Task.IsCompleted == false)
+                    {
+                        decode.SetResult(decoded);
+                    }
                     var ev = new Event
                     {
                         Type = EventType.Data,
