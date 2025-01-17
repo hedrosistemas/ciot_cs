@@ -17,7 +17,6 @@ namespace Ciot.Grpc.Services
             this.ifaceRespository = ifaceRespository;
             this.ifaceManager = ifaceManager;
             this.subscribers = subscribers;
-            this.ifaceManager.OnEvent += IfaceManager_OnEvent;
         }
 
         public override Task<CreateIfaceResponse> CreateIface(CreateIfaceRequest request, ServerCallContext context)
@@ -130,7 +129,12 @@ namespace Ciot.Grpc.Services
         {
             var subscriber = new Subscriber<Event>(request.Iface);
 
-            if(subscribers.TryAdd(request.Id, subscriber))
+            if(subscribers.Count == 0)
+            {
+                ifaceManager.OnEvent += IfaceManager_OnEvent;
+            }
+
+            if (subscribers.TryAdd(request.Id, subscriber))
             {
                 subscribers[request.Id] = subscriber;
             }
@@ -158,12 +162,20 @@ namespace Ciot.Grpc.Services
                     {
                         ifaceManager.UnsubscribeToEvents(request.Iface);
                         subscribers.TryRemove(request.Id, out _);
+                        if(subscribers.Count == 0)
+                        {
+                            ifaceManager.OnEvent -= IfaceManager_OnEvent;
+                        }
                     }
                 },
                 l =>
                 {
                     ifaceManager.UnsubscribeToEvents(request.Iface);
                     subscribers.TryRemove(request.Id, out _);
+                    if (subscribers.Count == 0)
+                    {
+                        ifaceManager.OnEvent -= IfaceManager_OnEvent;
+                    }
                     throw l;
                 });
         }
