@@ -50,7 +50,7 @@ namespace Ciot.Sdk.Iface
             else
             {
                 subscriptions.Add(iface.Info.Id, new IfaceEventManagerSubscription(iface));
-                iface.OnEvent += Iface_OnEvent;
+                subscriptions[iface.Info.Id].Iface.OnEvent += Iface_OnEvent;
                 return Unit.Default;
             }
         }
@@ -66,7 +66,7 @@ namespace Ciot.Sdk.Iface
                     subscription.Count--;
                     if(subscription.Count == 0)
                     {
-                        subscription.Iface.OnEvent -= Iface_OnEvent;
+                        subscriptions[iface.Info.Id].Iface.OnEvent -= Iface_OnEvent;
                         subscriptions.Remove(iface.Info.Id);
                     }
                     return Unit.Default;
