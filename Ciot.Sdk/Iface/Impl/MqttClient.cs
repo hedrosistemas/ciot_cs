@@ -37,15 +37,26 @@ namespace Ciot.Sdk.Iface.Impl
                 .WithClientId(cfg.ClientId)
                 .WithTcpServer(uri.Host, uri.Port)
                 .WithCleanSession()
+                .WithCredentials(cfg.User, cfg.Password)
                 .Build();
 
             client = factory.CreateMqttClient();
             client.ConnectedAsync += Client_ConnectedAsync;
+            client.DisconnectedAsync += Client_DisconnectedAsync;
             client.ApplicationMessageReceivedAsync += Client_ApplicationMessageReceivedAsync;
 
             client.ConnectAsync(opts).Wait();
 
             return Err.Ok;
+        }
+
+        private Task Client_DisconnectedAsync(MqttClientDisconnectedEventArgs arg)
+        {
+            OnEvent?.Invoke(this, new Event
+            {
+                Type = EventType.Stopped,
+            });
+            return Task.CompletedTask;
         }
 
         public Err Stop()
@@ -61,6 +72,10 @@ namespace Ciot.Sdk.Iface.Impl
                 .WithTopic(cfg.Topics.Sub)
                 .Build();
             client.SubscribeAsync(topicFilter);
+            OnEvent?.Invoke(this, new Event
+            {
+                Type = EventType.Started,
+            });
             return Task.CompletedTask;
         }
 

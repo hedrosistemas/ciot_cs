@@ -3,6 +3,7 @@ using Ciot.Grpc.Common.Stream;
 using Ciot.Sdk.Config;
 using Ciot.Sdk.Iface;
 using System.Collections.Concurrent;
+using Grpc.AspNetCore.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 var ifacesSubscribers = new ConcurrentDictionary<string, Subscriber<Event>>();
