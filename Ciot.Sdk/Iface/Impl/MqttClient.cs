@@ -72,6 +72,10 @@ namespace Ciot.Sdk.Iface.Impl
                 .WithTopic(cfg.Topics.Sub)
                 .Build();
             client.SubscribeAsync(topicFilter);
+            OnEvent?.Invoke(this, new Event
+            {
+                Type = EventType.Started,
+            });
             return Task.CompletedTask;
         }
 
