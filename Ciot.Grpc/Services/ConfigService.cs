@@ -1,11 +1,12 @@
 ﻿using Ciot.Protos.V2;
 using Ciot.Sdk.Config;
+using Ciot.Sdk.Iface;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 
 namespace Ciot.Grpc.Services
 {
-    public class ConfigService(IConfigRepository configRepository) : Protos.V2.ConfigService.ConfigServiceBase
+    public class ConfigService(IConfigRepository configRepository, IIfaceManager ifaceManager) : Protos.V2.ConfigService.ConfigServiceBase
     {
         public override Task<SetConfigResponse> SetConfig(SetConfigRequest request, ServerCallContext context)
         {
@@ -15,6 +16,7 @@ namespace Ciot.Grpc.Services
                 r =>
                 {
                     response.Config = r;
+                    ifaceManager.SetIfaceConfig(request.Config);
                     return Task.FromResult(response);
                 },
                 l => throw l);
