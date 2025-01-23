@@ -186,5 +186,15 @@ namespace Ciot.Sdk.Iface
                 r => Unsubscribe(r),
                 l => l);
         }
+
+        public Either<ErrorBase, Unit> SetIfaceConfig(Msg msg)
+        {
+            if (ifaces.ContainsKey(msg.Id))
+            {
+                ifaces[msg.Id].Stop();
+                ifaces[msg.Id].ProcessData(msg.Data);
+            }
+            return Unit.Default;
+        }
     }
 }

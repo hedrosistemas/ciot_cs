@@ -18,5 +18,7 @@ namespace Ciot.Sdk.Iface
         Either<ErrorBase, Unit> SubscribeToEvents(SubscribeToEventsRequest request);
 
         Either<ErrorBase, Unit> UnsubscribeToEvents(IfaceInfo iface);
+
+        Either<ErrorBase, Unit> SetIfaceConfig(Msg msg);
     }
 }
