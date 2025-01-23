@@ -36,7 +36,7 @@ namespace Ciot.Sdk.Iface.Impl
         {
             this.cfg = cfg;
             port.PortName = $"COM{cfg.Num}";
-            port.BaudRate = cfg.BaudRate;
+            port.BaudRate = (int)cfg.BaudRate;
             port.DtrEnable = cfg.Dtr;
             port.ReadTimeout = 5000;
             port.WriteTimeout = 5000;
