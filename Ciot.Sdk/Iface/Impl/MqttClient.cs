@@ -37,6 +37,7 @@ namespace Ciot.Sdk.Iface.Impl
                 .WithClientId(cfg.ClientId)
                 .WithTcpServer(uri.Host, uri.Port)
                 .WithCleanSession()
+                .WithCredentials(cfg.User, cfg.Password)
                 .Build();
 
             client = factory.CreateMqttClient();
