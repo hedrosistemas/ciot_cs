@@ -1,3 +1,3 @@
-[submodule "modules"]
-	path = modules
-	url = https://github.com/ciot-platform/ciot_types_proto.git
+[submodule "submodules/protos"]
+	path = submodules/protos
+	url = https://github.com/ciot-platform/ciot_types_proto

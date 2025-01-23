@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="robocopy &quot;../modules/ciot&quot; &quot;ciot&quot; /E /XO&#xD;&#xA;if %25ERRORLEVEL%25 LSS 9 exit /B 0" />
+    <Exec Command="robocopy &quot;../submodules/protos/ciot&quot; &quot;ciot&quot; /E /XO&#xD;&#xA;if %25ERRORLEVEL%25 LSS 9 exit /B 0" />
   </Target>
 
   <ItemGroup>
