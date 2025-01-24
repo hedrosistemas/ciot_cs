@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Ciot.Sdk.Iface.Impl
 {
-    internal class MqttClient : IIface
+    public class MqttClient : IIface
     {
         public event EventHandler<Event> OnEvent;
         public IfaceInfo Info { get; private set; }
