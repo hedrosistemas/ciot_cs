@@ -30,6 +30,11 @@ namespace Ciot.Sdk.Iface
             ifaces = new Dictionary<uint, IIface>();
         }
 
+        protected virtual IIface CreateCustomIface(IfaceInfo iface)
+        {
+            return null;
+        }
+
         public Either<ErrorBase, IIface> CreateIface(IfaceInfo iface)
         {
             if (ifaces.ContainsKey(iface.Id) && ifaces[iface.Id].Info.Type == iface.Type)
@@ -41,63 +46,66 @@ namespace Ciot.Sdk.Iface
             return result.Match(
                 r =>
                 {
-                    IIface newIface = null;
+                    IIface newIface = CreateCustomIface(iface);
 
-                    switch (iface.Type)
+                    if(newIface == null)
                     {
-                        case IfaceType.Undefined:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.Custom:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.Ciot:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.Storage:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.Sys:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.Uart:
-                            newIface = new Uart(iface);
-                            break;
-                        case IfaceType.Usb:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.Tcp:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.Eth:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.Wifi:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.Ble:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.BleScn:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.BleAdv:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.Gpio:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.Ntp:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.Ota:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.Dfu:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.HttpClient:
-                            newIface = new HttpClient(iface);
-                            break;
-                        case IfaceType.HttpServer:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.MqttClient:
-                            newIface = new MqttClient(iface);
-                            break;
-                        case IfaceType.Socket:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.Bridge:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.IotaClient:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        case IfaceType.IotaServer:
-                            return new ErrorNotImplemented("Interface not implemented");
-                        default:
-                            return new ErrorNotImplemented("Interface not implemented");
+                        switch (iface.Type)
+                        {
+                            case IfaceType.Undefined:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.Custom:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.Ciot:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.Storage:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.Sys:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.Uart:
+                                newIface = new Uart(iface);
+                                break;
+                            case IfaceType.Usb:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.Tcp:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.Eth:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.Wifi:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.Ble:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.BleScn:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.BleAdv:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.Gpio:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.Ntp:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.Ota:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.Dfu:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.HttpClient:
+                                newIface = new HttpClient(iface);
+                                break;
+                            case IfaceType.HttpServer:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.MqttClient:
+                                newIface = new MqttClient(iface);
+                                break;
+                            case IfaceType.Socket:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.Bridge:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.IotaClient:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            case IfaceType.IotaServer:
+                                return new ErrorNotImplemented("Interface not implemented");
+                            default:
+                                return new ErrorNotImplemented("Interface not implemented");
+                        }
                     }
 
                     if(newIface == null)
