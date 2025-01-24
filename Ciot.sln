@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ciot.Sdk", "Ciot.Sdk\Ciot.S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ciot.Grpc", "Ciot.Grpc\Ciot.Grpc.csproj", "{5C2FD7ED-0EE6-4176-B5FA-F9B57EF4AC1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ciot.Protos", "Ciot.Protos\Ciot.Protos.csproj", "{6B1C966A-1B68-4251-BB72-005B40C494BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ciot.Protos", "Ciot.Protos\Ciot.Protos.csproj", "{6B1C966A-1B68-4251-BB72-005B40C494BE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{9765DA51-5E13-43B8-87AF-9E21E03CE560}"
+	ProjectSection(SolutionItems) = preProject
+		protos.bat = protos.bat
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
