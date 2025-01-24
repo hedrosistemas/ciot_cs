@@ -153,5 +153,10 @@ namespace Ciot.Sdk.Iface.Impl
                 return new ErrorException(ex);
             }
         }
+
+        protected void TriggerEvent(Event e)
+        {
+            OnEvent?.Invoke(this, e);
+        }
     }
 }
