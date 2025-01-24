@@ -79,7 +79,7 @@ namespace Ciot.Sdk.Iface.Impl
             return Task.CompletedTask;
         }
 
-        private Task Client_ApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs arg)
+        protected virtual Task Client_ApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs arg)
         {
             if (responseTcs != null && !responseTcs.Task.IsCompleted)
             {
