@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="$(SolutionDir)protos.bat" />
+    <Exec Command="$(SolutionDir)protos.bat $(SolutionDir) $(ProjectDir)" />
   </Target>
 
   <ItemGroup>
