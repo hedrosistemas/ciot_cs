@@ -59,6 +59,7 @@ namespace Ciot.Sdk.Iface
         {
             if (id < ifaces.Count)
             {
+                ifaces[(int)id].Id = id;
                 ifaces[(int)id].Type = ifaceType;
                 Save();
                 return ifaces[(int)id];
