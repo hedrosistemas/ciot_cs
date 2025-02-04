@@ -43,6 +43,7 @@ namespace Ciot.Sdk.Iface.Impl
             try
             {
                 port.Open();
+                port.ReadExisting();
                 OnEvent?.Invoke(this, new Event
                 {
                     Type = EventType.Started,
