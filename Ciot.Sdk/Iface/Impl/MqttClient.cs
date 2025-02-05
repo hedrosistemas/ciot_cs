@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Ciot.Sdk.Iface.Impl
 {
-    internal class MqttClient : IIface
+    public class MqttClient : IIface
     {
         public event EventHandler<Event> OnEvent;
         public IfaceInfo Info { get; private set; }
@@ -79,7 +79,7 @@ namespace Ciot.Sdk.Iface.Impl
             return Task.CompletedTask;
         }
 
-        private Task Client_ApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs arg)
+        protected virtual Task Client_ApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs arg)
         {
             if (responseTcs != null && !responseTcs.Task.IsCompleted)
             {
@@ -152,6 +152,11 @@ namespace Ciot.Sdk.Iface.Impl
             {
                 return new ErrorException(ex);
             }
+        }
+
+        protected void TriggerEvent(Event e)
+        {
+            OnEvent?.Invoke(this, e);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Ciot.Protos.V2;
-using Ciot.Sdk.Common.Error;
+﻿using Ciot.Sdk.Common.Error;
 using LanguageExt;
 using System.Collections.Generic;
 
@@ -7,10 +6,14 @@ namespace Ciot.Sdk.Iface
 {
     public interface IIfaceRepository
     {
-        Either<ErrorBase, IfaceInfo> CreateIface(IfaceType ifaceType);
-        Either<ErrorBase, List<IfaceInfo>> GetIfaces();
-        Either<ErrorBase, IfaceInfo> GetIfaceById(uint id);
-        Either<ErrorBase, IfaceInfo> UpdateIface(uint id, IfaceType ifaceType);
-        Either<ErrorBase, IfaceInfo> DeleteIface(uint id);
+        Either<ErrorBase, Msg> CreateIface(Msg msg);
+
+        Either<ErrorBase, Msg> GetIfaceById(uint id);
+
+        Either<ErrorBase, List<Msg>> GetIfaces();
+
+        Either<ErrorBase, Msg> UpdateIface(Msg msg);
+
+        Either<ErrorBase, Msg> DeleteIface(uint id);
     }
 }

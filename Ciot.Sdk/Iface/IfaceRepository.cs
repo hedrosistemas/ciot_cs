@@ -1,9 +1,9 @@
 ﻿using Ciot.Protos.V2;
 using Ciot.Sdk.Common.Error;
 using LanguageExt;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Ciot.Sdk.Iface
 {
@@ -11,83 +11,80 @@ namespace Ciot.Sdk.Iface
     {
         private const string filename = "ifaces.json";
 
-        private List<IfaceInfo> ifaces;
-
-        public IfaceRepository() 
+        public Either<ErrorBase, Msg> CreateIface(Msg msg)
         {
-            if(File.Exists(filename))
-            {
-                var data = File.ReadAllText(filename);
-                ifaces = JsonConvert.DeserializeObject<List<IfaceInfo>>(data);
-            }
-            else
-            {
-                ifaces = new List<IfaceInfo>();
-            }
+            var ifaces = GetIfacesDic();
+            uint nextId = ifaces.Any() ? ifaces.Keys.Max() + 1 : 1;
+            msg.Id = nextId;
+            msg.Iface.Id = nextId;
+            ifaces[nextId] = msg;
+            SaveIfaces(ifaces.Values.ToList());
+            return msg;
         }
 
-        public Either<ErrorBase, IfaceInfo> CreateIface(IfaceType ifaceType)
+        public Either<ErrorBase, Msg> DeleteIface(uint id)
         {
-            var iface = new IfaceInfo
-            {
-                Id = (uint)ifaces.Count,
-                Type = ifaceType,
-            };
-            ifaces.Add(iface);
-            Save();
-            return iface;
+            var ifaces = GetIfacesDic();
+
+            if (!ifaces.ContainsKey(id))
+                return new ErrorNotFound($"Iface with ID {id} not found.");
+
+            var deletedIface = ifaces[id];
+            ifaces.Remove(id);
+            SaveIfaces(ifaces.Values.ToList());
+
+            return deletedIface;
         }
 
-        public Either<ErrorBase, IfaceInfo> GetIfaceById(uint id)
+        public Either<ErrorBase, Msg> GetIfaceById(uint id)
         {
-            if(id < ifaces.Count)
-            {
-                return ifaces[(int)id];
-            }
-            else
-            {
-                return new ErrorNotFound();
-            }
-        }
+            var ifaces = GetIfacesDic();
 
-        public Either<ErrorBase, List<IfaceInfo>> GetIfaces()
-        {
-            return ifaces;
-        }
-
-        public Either<ErrorBase, IfaceInfo> UpdateIface(uint id, IfaceType ifaceType)
-        {
-            if (id < ifaces.Count)
+            if(ifaces.TryGetValue(id, out var iface))
             {
-                ifaces[(int)id].Type = ifaceType;
-                Save();
-                return ifaces[(int)id];
-            }
-            else
-            {
-                return new ErrorNotFound();
-            }
-        }
-
-        public Either<ErrorBase, IfaceInfo> DeleteIface(uint id)
-        {
-            if (id < ifaces.Count)
-            {
-                var iface = ifaces[(int)id];
-                ifaces.RemoveAt((int)id);
-                Save();
                 return iface;
             }
             else
             {
-                return new ErrorNotFound();
+                return new ErrorNotFound($"Iface with ID {id} not found.");
             }
         }
 
-        private void Save()
+        public Either<ErrorBase, List<Msg>> GetIfaces()
         {
-            var data = JsonConvert.SerializeObject(ifaces);
-            File.WriteAllText(filename, data);
+            var ifaces = GetIfacesDic();
+            return ifaces.Values.ToList();
+        }
+
+        public Either<ErrorBase, Msg> UpdateIface(Msg msg)
+        {
+            var ifaces = GetIfacesDic();
+
+            if (!ifaces.ContainsKey(msg.Id))
+                return new ErrorNotFound($"Iface with ID {msg.Id} not found.");
+
+            ifaces[msg.Id] = msg;
+            SaveIfaces(ifaces.Values.ToList());
+
+            return msg;
+        }
+
+        private Dictionary<uint, Msg> GetIfacesDic()
+        {
+            if (!File.Exists(filename))
+                return new Dictionary<uint, Msg>();
+
+            var data = File.ReadAllText(filename);
+            var ifaces = IfacesList.Parser.ParseJson(data).Items.ToList() ?? new List<Msg>();
+
+            return ifaces.ToDictionary(iface => iface.Id);
+        }
+
+        private void SaveIfaces(List<Msg> ifaces)
+        {
+            var list = new IfacesList();
+            list.Items.AddRange(ifaces);
+            File.WriteAllText(filename, list.ToString());
         }
     }
 }

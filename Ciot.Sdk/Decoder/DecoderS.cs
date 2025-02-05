@@ -37,9 +37,9 @@ namespace Ciot.Sdk.Decoder
             switch (State)
             {
                 case DecoderState.WaitStart:
+                    idx = 0;
                     if (input == startch)
                     {
-                        idx = 0;
                         State = DecoderState.WaitSize;
                     }
                     break;

@@ -5,35 +5,8 @@
   </PropertyGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="robocopy &quot;$(SolutionDir)/submodules/protos/ciot&quot; &quot;ciot&quot; /E /XO&#xD;&#xA;if %25ERRORLEVEL%25 LSS 9 exit /B 0" />
+    <Exec Command="$(SolutionDir)protos.bat $(SolutionDir) $(ProjectDir)" />
   </Target>
-
-  <ItemGroup>
-    <None Remove="ciot\proto\v2\ble.proto" />
-    <None Remove="ciot\proto\v2\ble_adv.proto" />
-    <None Remove="ciot\proto\v2\ble_scn.proto" />
-    <None Remove="ciot\proto\v2\ciot.proto" />
-    <None Remove="ciot\proto\v2\config_service.proto" />
-    <None Remove="ciot\proto\v2\dfu.proto" />
-    <None Remove="ciot\proto\v2\errors.proto" />
-    <None Remove="ciot\proto\v2\event.proto" />
-    <None Remove="ciot\proto\v2\gpio.proto" />
-    <None Remove="ciot\proto\v2\http_client.proto" />
-    <None Remove="ciot\proto\v2\http_server.proto" />
-    <None Remove="ciot\proto\v2\iface.proto" />
-    <None Remove="ciot\proto\v2\iface_service.proto" />
-    <None Remove="ciot\proto\v2\logger.proto" />
-    <None Remove="ciot\proto\v2\mqtt_client.proto" />
-    <None Remove="ciot\proto\v2\msg.proto" />
-    <None Remove="ciot\proto\v2\ntp.proto" />
-    <None Remove="ciot\proto\v2\ota.proto" />
-    <None Remove="ciot\proto\v2\storage.proto" />
-    <None Remove="ciot\proto\v2\sys.proto" />
-    <None Remove="ciot\proto\v2\tcp.proto" />
-    <None Remove="ciot\proto\v2\uart.proto" />
-    <None Remove="ciot\proto\v2\usb.proto" />
-    <None Remove="ciot\proto\v2\wifi.proto" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.29.3" />
@@ -45,30 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="ciot\proto\v2\ble.proto" />
-    <Protobuf Include="ciot\proto\v2\ble_adv.proto" />
-    <Protobuf Include="ciot\proto\v2\ble_scn.proto" />
-    <Protobuf Include="ciot\proto\v2\ciot.proto" />
-    <Protobuf Include="ciot\proto\v2\config_service.proto" />
-    <Protobuf Include="ciot\proto\v2\dfu.proto" />
-    <Protobuf Include="ciot\proto\v2\errors.proto" />
-    <Protobuf Include="ciot\proto\v2\event.proto" />
-    <Protobuf Include="ciot\proto\v2\gpio.proto" />
-    <Protobuf Include="ciot\proto\v2\http_client.proto" />
-    <Protobuf Include="ciot\proto\v2\http_server.proto" />
-    <Protobuf Include="ciot\proto\v2\iface.proto" />
-    <Protobuf Include="ciot\proto\v2\iface_service.proto" />
-    <Protobuf Include="ciot\proto\v2\logger.proto" />
-    <Protobuf Include="ciot\proto\v2\mqtt_client.proto" />
-    <Protobuf Include="ciot\proto\v2\msg.proto" />
-    <Protobuf Include="ciot\proto\v2\ntp.proto" />
-    <Protobuf Include="ciot\proto\v2\ota.proto" />
-    <Protobuf Include="ciot\proto\v2\storage.proto" />
-    <Protobuf Include="ciot\proto\v2\sys.proto" />
-    <Protobuf Include="ciot\proto\v2\tcp.proto" />
-    <Protobuf Include="ciot\proto\v2\uart.proto" />
-    <Protobuf Include="ciot\proto\v2\usb.proto" />
-    <Protobuf Include="ciot\proto\v2\wifi.proto" />
+    <!-- Incluir automaticamente todos os arquivos .proto do diretório especificado -->
+    <Protobuf Include="**\**\**\**\*.proto" />
   </ItemGroup>
 
 </Project>

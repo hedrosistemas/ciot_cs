@@ -36,13 +36,14 @@ namespace Ciot.Sdk.Iface.Impl
         {
             this.cfg = cfg;
             port.PortName = $"COM{cfg.Num}";
-            port.BaudRate = cfg.BaudRate;
+            port.BaudRate = (int)cfg.BaudRate;
             port.DtrEnable = cfg.Dtr;
             port.ReadTimeout = 5000;
             port.WriteTimeout = 5000;
             try
             {
                 port.Open();
+                port.ReadExisting();
                 OnEvent?.Invoke(this, new Event
                 {
                     Type = EventType.Started,
@@ -117,15 +118,9 @@ namespace Ciot.Sdk.Iface.Impl
             {
                 if (!port.IsOpen) port.Open();
                 port.ReadExisting();
+                decode = new TaskCompletionSource<byte[]>();
                 SendBytes(data);
-                if (decoder != null)
-                {
-                    return await decode.Task;
-                }
-                else
-                {
-                    return new ErrorInternal("Invalid decoder");
-                }
+                return await decode.Task;
             }
             catch (Exception ex)
             {
@@ -151,7 +146,7 @@ namespace Ciot.Sdk.Iface.Impl
             {
                 if (decoder.Decode(data[i], out decoded))
                 {
-                    if(decode.Task.IsCompleted == false)
+                    if(decode?.Task.IsCompleted == false)
                     {
                         decode.SetResult(decoded);
                     }
