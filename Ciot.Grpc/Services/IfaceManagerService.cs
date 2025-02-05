@@ -1,5 +1,5 @@
-﻿using Ciot.Protos.V2;
-using Ciot.Grpc.Common.Stream;
+﻿using Ciot.Grpc.Common.Stream;
+using Ciot.Protos.V2;
 using Ciot.Sdk.Common.Error;
 using Ciot.Sdk.Iface;
 using Google.Protobuf.WellKnownTypes;
@@ -8,25 +8,17 @@ using System.Collections.Concurrent;
 
 namespace Ciot.Grpc.Services
 {
-    public class IfaceService : Protos.V2.IfaceService.IfaceServiceBase
+    public class IfaceManagerService(IIfaceManager ifaceManager, IIfaceRepository ifaceRepository, ConcurrentDictionary<string, Subscriber<Event>> subscribers) : Protos.V2.IfaceManagerService.IfaceManagerServiceBase
     {
-        IIfaceRepository ifaceRespository; IIfaceManager ifaceManager; ConcurrentDictionary<string, Subscriber<Event>> subscribers;
-
-        public IfaceService(IIfaceRepository ifaceRespository, IIfaceManager ifaceManager, ConcurrentDictionary<string, Subscriber<Event>> subscribers)
-        {
-            this.ifaceRespository = ifaceRespository;
-            this.ifaceManager = ifaceManager;
-            this.subscribers = subscribers;
-        }
-
         public override Task<CreateIfaceResponse> CreateIface(CreateIfaceRequest request, ServerCallContext context)
         {
             var response = new CreateIfaceResponse();
-            var result = ifaceRespository.CreateIface(request.Type);
+            var result = ifaceRepository.CreateIface(request.Message);
             return result.Match(
                 r =>
                 {
-                    response.Iface = r;
+                    response.Message = r;
+                    ifaceManager.SetIfaceConfig(request.Message);
                     return Task.FromResult(response);
                 },
                 l => throw l);
@@ -35,11 +27,11 @@ namespace Ciot.Grpc.Services
         public override Task<GetIfacesResponse> GetIfaces(Empty request, ServerCallContext context)
         {
             var response = new GetIfacesResponse();
-            var result = ifaceRespository.GetIfaces();
+            var result = ifaceRepository.GetIfaces();
             return result.Match(
                 r =>
                 {
-                    response.Ifaces.AddRange(r);
+                    response.List.AddRange(r);
                     return Task.FromResult(response);
                 },
                 l => throw l);
@@ -48,11 +40,11 @@ namespace Ciot.Grpc.Services
         public override Task<GetIfaceResponse> GetIface(GetIfaceRequest request, ServerCallContext context)
         {
             var response = new GetIfaceResponse();
-            var result = ifaceRespository.GetIfaceById(request.Id);
+            var result = ifaceRepository.GetIfaceById(request.Id);
             return result.Match(
                 r =>
                 {
-                    response.Iface = r;
+                    response.Message = r;
                     return Task.FromResult(response);
                 },
                 l => throw l);
@@ -61,11 +53,12 @@ namespace Ciot.Grpc.Services
         public override Task<UpdateIfaceResponse> UpdateIface(UpdateIfaceRequest request, ServerCallContext context)
         {
             var response = new UpdateIfaceResponse();
-            var result = ifaceRespository.UpdateIface(request.Id, request.Type);
+            var result = ifaceRepository.UpdateIface(request.Message);
             return result.Match(
                 r =>
                 {
-                    response.Iface = r;
+                    response.Message = r;
+                    ifaceManager.SetIfaceConfig(r);
                     return Task.FromResult(response);
                 },
                 l => throw l);
@@ -74,11 +67,12 @@ namespace Ciot.Grpc.Services
         public override Task<DeleteIfaceResponse> DeleteIface(DeleteIfaceRequest request, ServerCallContext context)
         {
             var response = new DeleteIfaceResponse();
-            var result = ifaceRespository.DeleteIface(request.Id);
+            var result = ifaceRepository.DeleteIface(request.Id);
             return result.Match(
                 r =>
                 {
-                    response.Iface = r;
+                    response.Message = r;
+                    ifaceRepository.DeleteIface(r.Iface.Id);
                     return Task.FromResult(response);
                 },
                 l => throw l);
@@ -129,7 +123,7 @@ namespace Ciot.Grpc.Services
         {
             var subscriber = new Subscriber<Event>(request.Iface);
 
-            if(subscribers.Count == 0)
+            if (subscribers.Count == 0)
             {
                 ifaceManager.OnEvent += IfaceManager_OnEvent;
             }
@@ -149,7 +143,7 @@ namespace Ciot.Grpc.Services
                 {
                     try
                     {
-                        while (!context.CancellationToken.IsCancellationRequested) 
+                        while (!context.CancellationToken.IsCancellationRequested)
                         {
                             await subscriber.DataAvailable.WaitAsync(context.CancellationToken);
                             while (subscriber.Queue.TryDequeue(out var e))
@@ -158,11 +152,11 @@ namespace Ciot.Grpc.Services
                             }
                         }
                     }
-                    finally 
+                    finally
                     {
                         ifaceManager.UnsubscribeToEvents(request.Iface);
                         subscribers.TryRemove(request.Id, out _);
-                        if(subscribers.Count == 0)
+                        if (subscribers.Count == 0)
                         {
                             ifaceManager.OnEvent -= IfaceManager_OnEvent;
                         }
@@ -189,7 +183,7 @@ namespace Ciot.Grpc.Services
 
             foreach (var subscriber in subscribers.Values)
             {
-                if(subscriber.Iface.Id == iface.Info.Id && subscriber.Iface.Type == iface.Info.Type)
+                if (subscriber.Iface.Id == iface.Info.Id && subscriber.Iface.Type == iface.Info.Type)
                 {
                     subscriber.Queue.Enqueue(e);
                     subscriber.DataAvailable.Set();

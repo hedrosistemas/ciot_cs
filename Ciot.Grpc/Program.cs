@@ -1,6 +1,5 @@
 using Ciot.Protos.V2;
 using Ciot.Grpc.Common.Stream;
-using Ciot.Sdk.Config;
 using Ciot.Sdk.Iface;
 using System.Collections.Concurrent;
 using Grpc.AspNetCore.Server;
@@ -15,12 +14,10 @@ builder.Services.AddGrpcReflection();
 builder.Services.AddSingleton(ifacesSubscribers);
 builder.Services.AddSingleton<IIfaceRepository, IfaceRepository>();
 builder.Services.AddSingleton<IIfaceManager, IfaceManager>();
-builder.Services.AddSingleton<IConfigRepository, ConfigRepository>();
 
 var app = builder.Build();
 
-app.MapGrpcService<Ciot.Grpc.Services.IfaceService>();
-app.MapGrpcService<Ciot.Grpc.Services.ConfigService>();
+app.MapGrpcService<Ciot.Grpc.Services.IfaceManagerService>();
 
 if (app.Environment.IsDevelopment())
 {

@@ -1,6 +1,5 @@
 ﻿using Ciot.Protos.V2;
 using Ciot.Sdk.Common.Error;
-using Ciot.Sdk.Config;
 using Ciot.Sdk.Iface.Impl;
 using Google.Protobuf;
 using LanguageExt;
@@ -11,17 +10,17 @@ namespace Ciot.Sdk.Iface
 {
     public class IfaceManager : IfaceEventManager, IIfaceManager
     {
-        private readonly IConfigRepository configRepository;
+        private readonly IIfaceRepository ifaceRepository;
 
         private IfaceInfo selectedIface;
 
         private const string selectedIfaceFile = "selectedIface.json";
 
-        private Dictionary<uint, IIface> ifaces;
+        private readonly Dictionary<uint, IIface> ifaces;
 
-        public IfaceManager(IConfigRepository configRepository) 
+        public IfaceManager(IIfaceRepository ifaceRepository) 
         {
-            this.configRepository = configRepository;
+            this.ifaceRepository = ifaceRepository;
             if (File.Exists(selectedIfaceFile))
             {
                 var content = File.ReadAllText(selectedIfaceFile);
@@ -42,7 +41,7 @@ namespace Ciot.Sdk.Iface
                 return Either<ErrorBase, IIface>.Right(ifaces[iface.Id]);
             }
 
-            var result = configRepository.GetConfigById(iface.Id);
+            var result = ifaceRepository.GetIfaceById(iface.Id);
             return result.Match(
                 r =>
                 {
@@ -137,7 +136,7 @@ namespace Ciot.Sdk.Iface
 
         public Either<ErrorBase, IfaceInfo> SelectIface(uint id)
         {
-            var result = configRepository.GetConfigById(id);
+            var result = ifaceRepository.GetIfaceById(id);
             return result.Match(
                 r =>
                 {
@@ -201,6 +200,10 @@ namespace Ciot.Sdk.Iface
             {
                 ifaces[msg.Id].Stop();
                 ifaces[msg.Id].ProcessData(msg.Data);
+            }
+            else
+            {
+                CreateIface(msg.Iface);
             }
             return Unit.Default;
         }
