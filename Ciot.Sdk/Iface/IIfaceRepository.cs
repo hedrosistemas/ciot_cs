@@ -1,6 +1,7 @@
 ﻿using Ciot.Sdk.Common.Error;
 using LanguageExt;
 using System.Collections.Generic;
+using Ciot.Protos.V2;
 
 namespace Ciot.Sdk.Iface
 {

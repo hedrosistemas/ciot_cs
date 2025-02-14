@@ -154,6 +154,16 @@ namespace Ciot.Sdk.Iface.Impl
             }
         }
 
+        public void Publish(string topic, byte[] data)
+        {
+            client.PublishBinaryAsync(topic, data, (MqttQualityOfServiceLevel)cfg.Qos);
+        }
+
+        public void Publish(string topic, string data)
+        {
+            client.PublishStringAsync(topic, data, (MqttQualityOfServiceLevel)cfg.Qos);
+        }
+
         protected void TriggerEvent(Event e)
         {
             OnEvent?.Invoke(this, e);
