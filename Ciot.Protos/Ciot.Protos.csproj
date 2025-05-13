@@ -4,10 +4,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="$(SolutionDir)protos.bat $(SolutionDir) $(ProjectDir)" />
-  </Target>
-
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.29.3" />
     <PackageReference Include="Grpc.Net.Client" Version="2.67.0" />
@@ -18,8 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Incluir automaticamente todos os arquivos .proto do diretório especificado -->
-    <Protobuf Include="**\**\**\**\*.proto" />
+	  <Protobuf Include="..\submodules\protos\**\**\**\**\*.proto"
+				AdditionalImportDirs="..\submodules\protos"/>
+	  <Protobuf Include="..\..\Protos\**\**\**\**\*.proto"
+			  AdditionalImportDirs="..\..\Protos;..\submodules\protos"/>
   </ItemGroup>
 
 </Project>
