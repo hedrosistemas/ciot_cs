@@ -1,23 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<!-- Pega o valor da variável de ambiente -->
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.29.3" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.67.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.69.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Google.Protobuf" Version="3.29.3" />
+		<PackageReference Include="Grpc.Net.Client" Version="2.67.0" />
+		<PackageReference Include="Grpc.Tools" Version="2.69.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-	  <Protobuf Include="..\submodules\protos\**\**\**\**\*.proto"
-				AdditionalImportDirs="..\submodules\protos"/>
-	  <Protobuf Include="..\..\Protos\**\**\**\**\*.proto"
-			  AdditionalImportDirs="..\..\Protos;..\submodules\protos"/>
-  </ItemGroup>
+	<Target Name="LogProtoPaths" BeforeTargets="PrepareForBuild">
+		<Message Text="Using CIOT_PATH: $(CIOT_PATH)" Importance="high" />
+		<Message Text="Using CIOT_ADD_PROTOS: $(CIOT_ADD_PROTOS)" Importance="high" />
+	</Target>
+
+	<ItemGroup>
+		<Protobuf Include="$(CIOT_PATH)\ciot_c\proto\**\*.proto"
+				  AdditionalImportDirs="$(CIOT_PATH)\ciot_c\proto" />
+		<Protobuf Include=" $(CIOT_ADD_PROTOS)\**\*.proto"
+				  AdditionalImportDirs=" $(CIOT_ADD_PROTOS);$(CIOT_PATH)\ciot_c\proto"
+				  Condition="'$(CIOT_ADD_PROTOS)' != ''" />
+	</ItemGroup>
 
 </Project>
