@@ -20,10 +20,10 @@
 	</Target>
 
 	<ItemGroup>
-		<Protobuf Include="$(CIOT_PATH)\ciot_c\proto\**\*.proto"
-				  AdditionalImportDirs="$(CIOT_PATH)\ciot_c\proto" />
+		<Protobuf Include="$(CIOT_PATH)\ciot_protos\**\*.proto"
+				  AdditionalImportDirs="$(CIOT_PATH)\ciot_protos" />
 		<Protobuf Include=" $(CIOT_ADD_PROTOS)\**\*.proto"
-				  AdditionalImportDirs=" $(CIOT_ADD_PROTOS);$(CIOT_PATH)\ciot_c\proto"
+				  AdditionalImportDirs=" $(CIOT_ADD_PROTOS);$(CIOT_PATH)\ciot_protos"
 				  Condition="'$(CIOT_ADD_PROTOS)' != ''" />
 	</ItemGroup>
 
