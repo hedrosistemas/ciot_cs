@@ -15,6 +15,8 @@ namespace Ciot.Sdk.Iface.Impl
     {
         public event EventHandler<Event> OnEvent;
         public IfaceInfo Info { get; private set; }
+        public MqttClientCfg Cfg => cfg;
+        public MqttClientStatus Status => status;
 
         private readonly MqttClientStatus status;
         private MqttClientCfg cfg;
@@ -72,6 +74,8 @@ namespace Ciot.Sdk.Iface.Impl
                 .WithTopic(cfg.Topics.Sub)
                 .Build();
             client.SubscribeAsync(topicFilter);
+            status.State = MqttClientState.Connected;
+            status.ConnCount++;
             OnEvent?.Invoke(this, new Event
             {
                 Type = EventType.Started,

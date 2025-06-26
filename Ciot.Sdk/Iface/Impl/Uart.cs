@@ -38,6 +38,7 @@ namespace Ciot.Sdk.Iface.Impl
             port.PortName = $"COM{cfg.Num}";
             port.BaudRate = (int)cfg.BaudRate;
             port.DtrEnable = cfg.Dtr;
+            port.StopBits = StopBits.One;
             port.ReadTimeout = 5000;
             port.WriteTimeout = 5000;
             try
