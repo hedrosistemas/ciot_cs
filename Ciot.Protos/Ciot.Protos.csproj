@@ -16,15 +16,16 @@
 
 	<Target Name="LogProtoPaths" BeforeTargets="PrepareForBuild">
 		<Message Text="Using CIOT_PATH: $(CIOT_PATH)" Importance="high" />
-		<Message Text="Using CIOT_ADD_PROTOS: $(CIOT_ADD_PROTOS)" Importance="high" />
+		<Message Text="Using CIOT_ADD_PROTOS_INCLUDE: $(CIOT_ADD_PROTOS_INCLUDE)" Importance="high" />
+		<Message Text="Using CIOT_ADD_PROTOS_ADDITIONAL_IMPORT_DIRS: $(CIOT_ADD_PROTOS_ADDITIONAL_IMPORT_DIRS)" Importance="high" />
 	</Target>
 
 	<ItemGroup>
 		<Protobuf Include="$(CIOT_PATH)\ciot_protos\**\*.proto"
 				  AdditionalImportDirs="$(CIOT_PATH)\ciot_protos" />
-		<Protobuf Include=" $(CIOT_ADD_PROTOS)\**\*.proto"
-				  AdditionalImportDirs=" $(CIOT_ADD_PROTOS);$(CIOT_PATH)\ciot_protos"
-				  Condition="'$(CIOT_ADD_PROTOS)' != ''" />
+		<Protobuf Include="$(CIOT_ADD_PROTOS_INCLUDE)"
+				  AdditionalImportDirs="$(CIOT_ADD_PROTOS_ADDITIONAL_IMPORT_DIRS)"
+				  Condition="'$(CIOT_ADD_PROTOS_INCLUDE)' != ''" />
 	</ItemGroup>
 
 </Project>
